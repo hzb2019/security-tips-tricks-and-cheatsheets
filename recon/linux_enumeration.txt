@@ -1,46 +1,50 @@
+________
 COMMANDS
 
-hostname
-uname -a
-ps -[A, axjf, aux]
-env
-sudo -l
-id
-history
-ifconfig
-ip route
-netstat -[a: display all sockets; n: do not resolve names; o: display timers,
-	  i: interface statistics; l: list listening ports; s: usage stats by protocol;
-          t: only show TCP; u: only show UDP; tp: show service name and PID;]
-find [path] [options: name, type, perm, mtime, atime, cmin, amin, size, writable] (prefix with +/- for greater than or less than)
-  find / -type d -perm -a=xrw 2>/dev/null; find all folders with global read/write/execute perms
-  find / -type f -perm -04000 -ls 2>/dev/null; list files with SUID or SGID bits set
-  find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u; list folders with write permissions
+  hostname
+  uname -a
+  ps -[A, axjf, aux]
+  env
+  sudo -l
+  id
+  history
+  ifconfig
+  ip route
+  netstat -[a: display all sockets; n: do not resolve names; o: display timers,
+      i: interface statistics; l: list listening ports; s: usage stats by protocol;
+            t: only show TCP; u: only show UDP; tp: show service name and PID;]
+  find [path] [options: name, type, perm, mtime, atime, cmin, amin, size, writable] (prefix with +/- for greater than or less than)
+    find / -type d -perm -a=xrw 2>/dev/null; find all folders with global read/write/execute perms
+    find / -type f -perm -04000 -ls 2>/dev/null; list files with SUID or SGID bits set
+    find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u; list folders with write permissions
 
-locate
-cut
-sort
-lsb_release -a
-hostnamectl
-dmesg
-grep [-v: get all that do not match]
-getcap -r / 2>/dev/null
-echo $PATH
+  locate
+  cut
+  sort
+  lsb_release -a
+  hostnamectl
+  dmesg
+  grep [-v: get all that do not match]
+  getcap -r / 2>/dev/null
+  echo $PATH
 
+_____
 FILES
 
-/proc/version
-/etc/issue
-/etc/passwd
-/etc/os-release
-/usr/lib/os-release
-/etc/crontab          --- https://crontab.guru/examples.html
+  /proc/version
+  /etc/issue
+  /etc/passwd
+  /etc/os-release
+  /usr/lib/os-release
+  /etc/crontab          --- https://crontab.guru/examples.html
 
+_______________
 AUTOMATED TOOLS
-LinPeas: https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS
-LinEnum: https://github.com/rebootuser/LinEnum
-LES (Linux Exploit Suggester): https://github.com/mzet-/linux-exploit-suggester
-Linux Smart Enumeration: https://github.com/diego-treitos/linux-smart-enumeration
-Linux Priv Checker: https://github.com/linted/linuxprivchecker
+  
+  LinPeas: https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS
+  LinEnum: https://github.com/rebootuser/LinEnum
+  LES (Linux Exploit Suggester): https://github.com/mzet-/linux-exploit-suggester
+  Linux Smart Enumeration: https://github.com/diego-treitos/linux-smart-enumeration
+  Linux Priv Checker: https://github.com/linted/linuxprivchecker
 
-Linux Exploit Suggester
+  Linux Exploit Suggester

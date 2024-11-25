@@ -1,27 +1,31 @@
-SHOW DATABASES;
-USE [database];
+_________________
+BASIC ENUMERATION
 
-SHOW TABLES;
-DESCRIBE [table];
+  SHOW DATABASES;
+  USE [database];
 
-useful commands:
-DISTINCT  (SELECT DISTINCT [column])
-GROUP BY  (SELECT . FROM . GROUP BY [column])
-ORDER BY  (SELECT . FROM . ORDER BY [column] [ASC/DESC])
-HAVING    (SELECT [x] FROM [y] WHERE/GROUP BY/etc [z] HAVING [column] [boolean])
-'%' is string wildcard, equivalent to \.*\ regex
-LIKE,'%'  ([string] LIKE '%asdf')
-BETWEEN   (WHERE [column] BETWEEN 2 AND 4)
-CONCAT()  (SELECT CONCAT(name, " is a type of ", category, " book.") AS book_info FROM books)
-GROUP_CONCAT()
-          (SELECT category, GROUP_CONCAT(name SEPARATOR ", ") AS books FROM books GROUP BY category)
-SUBSTRING()
-          (SELECT SUBSTRING(published_date, 1, 4) AS published_year FROM books)
-LENGTH()  string length function
-COUNT()   aggregates rows that match expression in parentheses
-SUM()     sums values in expression
-MAX()     max of values in expression
-MIN()     min of values in expression
+  SHOW TABLES;
+  DESCRIBE [table];
+
+_____________________________
+USEFUL KEYWORDS AND FUNCTIONS
+  DISTINCT  (SELECT DISTINCT [column])
+  GROUP BY  (SELECT . FROM . GROUP BY [column])
+  ORDER BY  (SELECT . FROM . ORDER BY [column] [ASC/DESC])
+  HAVING    (SELECT [x] FROM [y] WHERE/GROUP BY/etc [z] HAVING [column] [boolean])
+  '%' is string wildcard, equivalent to \.*\ regex
+  LIKE,'%'  ([string] LIKE '%asdf')
+  BETWEEN   (WHERE [column] BETWEEN 2 AND 4)
+  CONCAT()  (SELECT CONCAT(name, " is a type of ", category, " book.") AS book_info FROM books)
+  GROUP_CONCAT()
+            (SELECT category, GROUP_CONCAT(name SEPARATOR ", ") AS books FROM books GROUP BY category)
+  SUBSTRING()
+            (SELECT SUBSTRING(published_date, 1, 4) AS published_year FROM books)
+  LENGTH()  string length function
+  COUNT()   aggregates rows that match expression in parentheses
+  SUM()     sums values in expression
+  MAX()     max of values in expression
+  MIN()     min of values in expression
 
 
 
