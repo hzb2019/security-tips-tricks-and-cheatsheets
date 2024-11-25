@@ -1,0 +1,47 @@
+_______________
+INITIAL TESTING
+
+    First do recon to discover information about
+    the server to discover what OS it is running and
+    what software it runs on. This is necessary for 
+    uploading the correct shellcode or other exploits
+    in the correct server language making the correct 
+    OS system calls.
+
+    Once server information is gathered, start by 
+    determining allowed file types, then check to see 
+    if uploaded files can be located using gobuster or 
+    similar. If files can be located, check for file
+    type filtering. If there seems to be file type 
+    filtering, attempt methods in section below.
+
+    If server scripting files can be uploaded without
+    being filtered, check for arbitrary code execution.
+  
+   
+_____________________________
+BYPASSING FILE TYPE FILTERING
+
+    Try changing various aspects of the captured 
+    successful request like:
+    - File extension
+        * if filtering only checks for positive matches, try things like .[valid].php or .[valid].js
+        * FOR PHP SERVERS TRY: .php3, .php4, .php5, .php7, .phps, .php-s, .pht, .phar, .phtml
+    - Mime type
+        * https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types/Common_types
+    - Magic numbers (using hexedit)
+        * https://gist.github.com/leommoore/f9e57ba2aa4bf197ebc5
+
+    Once file type filtering is bypassed, move on to below.
+
+________________________
+ARBITRARY CODE EXECUTION
+
+    Once files containing code are uploaded and accessible,
+    check to see if arbitrary code execution on the server 
+    is feasible with system calls. If scripting files are 
+    filtered but not because of their file type, attempt 
+    obfuscation methods - append strings, change string 
+    encoding, use eval, etc.
+
+    Once ACE is feasible, job complete.

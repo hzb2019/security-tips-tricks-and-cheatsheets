@@ -1,0 +1,22 @@
+________
+BINARIES
+  
+  PASSIVE
+    whois [DOMAIN_NAME]
+    nslookup -type=[A/AAAA/MX/SOA/CNAME/TXT] [DOMAIN_NAME]
+    dig [(optional) @SERVER] [DOMAIN_NAME] [A/AAAA/MX/SOA/CNAME/TXT]
+  
+  ACTIVE
+    ping
+    traceroute [tracert on windows]
+      - asterisks in output mean dropped packets that were expected to be received
+    [telnet/netcat] [RHOST] [RPORT]
+      - GET [web directory] HTTP/1.1
+      - host: [telnet/netcat]
+      useful for obtaining server information like software and version
+  
+________________
+ONLINE RESOURCES
+
+  https://dnsdumpster.com/
+  https://www.shodan.io/
