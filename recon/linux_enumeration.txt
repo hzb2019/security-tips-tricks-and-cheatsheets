@@ -23,7 +23,8 @@ lsb_release -a
 hostnamectl
 dmesg
 grep [-v: get all that do not match]
-
+getcap -r / 2>/dev/null
+echo $PATH
 
 FILES
 
@@ -32,6 +33,7 @@ FILES
 /etc/passwd
 /etc/os-release
 /usr/lib/os-release
+/etc/crontab          --- https://crontab.guru/examples.html
 
 AUTOMATED TOOLS
 LinPeas: https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS

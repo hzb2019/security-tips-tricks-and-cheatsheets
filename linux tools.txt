@@ -1,0 +1,2 @@
+untarball:
+tar -xvzf [filename].tar.gz
