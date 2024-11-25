@@ -15,7 +15,8 @@ netstat -[a: display all sockets; n: do not resolve names; o: display timers,
 find [path] [options: name, type, perm, mtime, atime, cmin, amin, size, writable] (prefix with +/- for greater than or less than)
   find / -type d -perm -a=xrw 2>/dev/null; find all folders with global read/write/execute perms
   find / -type f -perm -04000 -ls 2>/dev/null; list files with SUID or SGID bits set
-                                  
+  find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u; list folders with write permissions
+
 locate
 cut
 sort
