@@ -1,0 +1,35 @@
+IDing HASHES
+https://hashes.com/en/tools/hash_identifier
+(wget) https://gitlab.com/kalilinux/packages/hash-identifier/-/tree/kali/master
+  python3 hash-id.py
+
+john --list=formats | grep -iF "md5"
+
+john --format=[format] --wordlist=[path] [hashfile path]
+
+For NTLM hash:
+  --format=nt
+
+For single crack:
+  --single
+
+Custom rulesets:
+  --rule=[Rule name]
+  Define rule in:
+  /opt/john/john.conf OR /etc/john/john.conf
+  Set rule name with:
+  [List.Rules:RULENAME]
+  
+  Rule options:
+    Az = append characters
+    A0 = prepend characters
+     c = capitalizes character at position
+      ex: cAz"[0-9] [!£$%@]" -> capitalize first letter, try appending 0-9, followed by symbols
+
+Zip/Rar files:
+  [zip2john/rar2john] [archive] > [outfile]
+  john --wordlist=[path] [outfile from previous]
+
+SSH keys:
+  [ssh2john/python3 ssh2john.py] [id_rsa private key file] > [outfile]
+  john --wordlist=[path] [outfile from previous]
