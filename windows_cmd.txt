@@ -1,4 +1,5 @@
 
+whoami (/priv)
 set
 ver
 systeminfo
@@ -13,4 +14,7 @@ mkdir/rmdir/move/del/erase
 type [FILENAME]
 tasklist [/? for help]
 taskkill /PID [PID]
-
+sc qc [SERVICE]
+sc [stop/start] [SERVICE]
+takeown
+icacls [FILEPATH] (/grant [GROUP]:[I/M/R/X/F])

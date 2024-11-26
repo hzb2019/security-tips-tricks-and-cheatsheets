@@ -28,6 +28,7 @@ USEFUL COMMANDS
   services:        Get-Service
   active x'ions:   Get-NetTCPConnection
   hashing:         Get-FileHash -Path [FILEPATH]
+  sc:              Set-Content   ### use sc.exe for services executable
 
 
   show all available commands:
