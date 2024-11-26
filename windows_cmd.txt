@@ -1,0 +1,16 @@
+
+set
+ver
+systeminfo
+(paging) more
+driverquery
+ipconfig (/all)
+tracert [RHOST]
+nslookup [RHOST] ([NAMESERVERIP])
+netstat [-a:all/b:show program/o:show PID/n: no name resolution]
+tree
+mkdir/rmdir/move/del/erase
+type [FILENAME]
+tasklist [/? for help]
+taskkill /PID [PID]
+

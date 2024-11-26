@@ -1,0 +1,75 @@
+__________________________
+METHODS TO OPEN POWERSHELL
+
+  type "powershell" into cmd.exe
+  search in start menu
+  windows key + r for run dialog, run "powershell"
+  navigate to intended folder, enter "powershell" into address bar
+  open task manager, go to 'file > run new task', enter powershell into dialog
+
+_______________
+USEFUL COMMANDS
+
+  cat:             Get-Content
+  cd:              Set-Location
+  ls:              Get-ChildItem
+  --help:          Get-Help [COMMAND] (-examples)
+  show aliases:    Get-Alias
+  search commands: Find-Module (-Name [NAME] (accepts * as wildcard))
+  touch:           New-Item -Path [FILEPATH] -ItemType "[Directory/File]"
+  rm:              Remove-Item -Path [PATH]
+  cp/mv:           Copy-Item, Move-Item
+  grep:            Select-String -Path [FILEPATH] -Pattern [STRING]
+  systeminfo:      Get-ComputerInfo
+  etc/passwd:      Get-LocalUser
+  ipconfig:        Get-NetIPConfiguration
+  show ip's:       Get-NetIPAddress
+  ps:              Get-Process
+  services:        Get-Service
+  active x'ions:   Get-NetTCPConnection
+  hashing:         Get-FileHash -Path [FILEPATH]
+
+
+  show all available commands:
+    Get-Command (-CommandType "[FILTER]")
+  sort objects by property column (usually done through piping):
+    Sort-Object [PROPERTY]
+  equivalent to SQL SELECT clause:
+    Select-Object [PROPERTY](,[PROPERTY],...)
+  equivalent to SQL WHERE clause:
+    Where-Object -Property [PROPERTY] [OPERATOR] [VARIABLE]
+
+  Get-Help Invoke-Command (-examples)
+
+
+_________________________________
+OPERATORS FOR BOOLEAN EXPRESSIONS
+  !=: -ne
+  > : -gt
+  >=: -ge
+  < : -lt
+  <=: -le
+      -like
+
+
+__________
+PS SCRIPTS
+
+  combine lines from two text files, save this as combine.ps1:
+
+    # Read the lines from each file
+    $file1 = Get-Content "[FILE1]"
+    $file2 = Get-Content "[FILE2]"
+    $outFilePath = "[OUTFILEPATH]"
+
+    # Combine the lines using a loop
+    for ($i = 0; $i -lt $file1.Count; $i++) {
+        if ($i -lt $file2.Count) {
+            # Combine lines if both files have content
+            "$($file1[$i]):$($file2[$i])" >> $outFilePath
+        } else {
+            # Output only file1 line if file2 is shorter
+            $file1[$i]
+        }
+    }
+
