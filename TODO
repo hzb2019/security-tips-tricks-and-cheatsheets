@@ -1,0 +1,19 @@
+add docs for intro to webhacking
+  - walking an application
+  - content discovery
+  - subdomain enumeration
+  - authentication bypass
+  - IDOR
+  - file inclusion
+  - intro to SSRF
+  - intro to XSS
+  - command injection
+  - SQL injection
+
+add docs for burp suite
+
+add docs for netsec
+  - nmap
+  - protocols and servers
+
+add docs for basic powershell usage
