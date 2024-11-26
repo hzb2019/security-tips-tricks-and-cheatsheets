@@ -1,2 +1,15 @@
 untarball:
-tar -xvzf [filename].tar.gz
+  tar -xvzf [filename].tar.gz
+
+ssh file transfer (using ssh credentials):
+  download: 
+    scp [LFILEPATH] [RUSER]@[RHOST]:[RFILEPATH]
+  upload:
+    scp [RUSER]@[RHOST]:[RFILEPATH] [LFILEPATH] 
+
+python server:
+  python3 -m http.server [LPORT]
+
+operators:
+  & -> backgrounds command
+  && -> chains commands, requires successful completion of sequence of commands

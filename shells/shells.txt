@@ -3,6 +3,7 @@ REVERSE SHELL LISTS/GENERATORS
 
   https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#socat
   https://github.com/0dayCTF/reverse-shell-generator
+  https://github.com/ernw/static-toolbox/releases?q=&expanded=true
 
 ______________________________________________________________________________________
 SHELLS AND STABILIZING METHODS
