@@ -1,0 +1,43 @@
+(sudo) tcpdump
+show interfaces: [ip address show/ip a s]
+count lines: tcpdump [OPTIONS] | wc
+man pcap-filter
+
+________
+PROTOCOL: arp, ether, icmp, ip, ip6, tcp, udp
+
+_______
+OPTIONS
+
+  -r [READFILE]
+  -i [any/CAPTURE INTERFACE]
+  -w [OUTFILE]
+  -c [COUNT]
+  -n                ((no DNS resolution))
+  -nn               ((no DNS nor port resolution))
+  -v(vv)            ((set verbosity level))
+  -q                ((quick output/brief packet info))
+  -e                ((print link level header))
+  -A                ((show packets in ASCII))
+  -xx               ((show packets in hex))
+  -X                ((show packet headers and data in hex and ASCII))
+  [PROTOCOL]        ((protocol to monitor))
+  port [LPORT]      ((port to monitor))
+  host [HOST]       ((host to monitor))
+  and/or/not
+  greater [INT]
+  less [INT]
+  
+___________
+PCAP-FILTER
+
+  [PROTOCOL]\[BYTEOFFSET:SIZE\]
+
+  ex:
+    ether[0] & 1 != 0 --> take first byte of ethernet header, binary & 0b00000001, keep if != 0b00000000.
+    ip[0] & 0xf != 5 --> take first byte of ip header, binary & 0b00001111, keep if != 0b00000101.
+    "tcp[tcpflags] == [TCPFLAG]" --> capture TCP packets that only contain [TCPFLAG]
+    "tcp[tcpflags] & [TCPFLAG]" --> capture TCP packets with at least [TCPFLAG] set
+    "tcp[tcpflags] & \(TCPFLAG1 | TCPFLAG2\)" --> capture TCP packets with at least [TCPFLAG1] or [TCPFLAG2] set
+
+  TCPFLAG: tcp-syn, tcp-ack, tcp-fin, tcp-rst, tcp-push

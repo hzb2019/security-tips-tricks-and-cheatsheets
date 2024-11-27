@@ -1,0 +1,6 @@
+general use: hydra -l [USERNAME] -P [PASSFILE] [PROTOCOL]://[RHOST]
+
+SSH: hydra -l [USERNAME] -P [PASSFILE] [RHOST] (-t [THREADS]) ssh
+
+POST web form: sudo hydra [USERNAME] [PASSFILE] [RHOST] http-post-form "[PATH]:[CREDENTIALS]:[INVALID]"
+ex:                                                "/login:username=^USER^&password=^PASS^:F=incorrect"

