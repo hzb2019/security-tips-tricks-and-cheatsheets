@@ -1,0 +1,8 @@
+
+https://attack.mitre.org/
+https://car.mitre.org/
+https://eql.readthedocs.io/en/latest/
+https://mitre-attack.github.io/attack-navigator/
+https://engage.mitre.org/starter-kit/
+https://engage.mitre.org/wp-content/uploads/2022/04/EngageHandbook-v1.0.pdf
+https://d3fend.mitre.org/
