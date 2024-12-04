@@ -1,0 +1,85 @@
+To start, I fire up Metasploit, Burp suite, and add the target host IP to my /etc/hosts
+file with the alias "rick.h" so I can type it quickly.
+
+When Burp suite is loaded, I add the target IP and alias domain to the targets and set it 
+to not collect traffic to other domains. I turn off traffic interception so I can navigate
+things freely for now. 
+
+With Metasploit now running, I do a quick db_nmap scan with the -sV, -sC, and -O flags 
+set to determine service versions, use common scripts, and find operating system, saving
+this information to the Metasploit database service. Searching online we find that there 
+are available exploits for the server version running on port 80, but the exploit 
+requires an existing .lua file that the server will execute. Maybe we can find one.
+We also find an SSH service running on the server. 
+
+I start an initial Gobuster scan on http://rick.h/ using the directory-2.3-medium.txt 
+file on the AttackBox and add the file extensions .php, .lua, and .js to the search, 
+and direct the output to a file index.txt.
+
+I go open the site in Firefox, and immediately check the source to find a username in
+a comment. Save this to a file on the AttackBox. Looking through my notes, I take a 
+look and see if there is a robots.txt file. There is, but it doesn't appear to contain 
+anything useful. 
+
+Immediately I attempt to run hydra and brute force using the username to login to SSH.
+It seems like the SSH service only accepts users with publickey authentication, so
+brute forcing will be essentially impossible. Skip this. 
+
+The Gobuster scan has found some interesting items. The /assets folder does not seem 
+to hold any interesting files - maybe in some other CTF we could investigate these 
+images further for hidden information, but I skip past this for now. Instead I go 
+on to look at the other pages - login.php seems interesting to check out. 
+
+When navigating to login.php, I immediately enter in the username saved from earlier
+and type ' OR 1=1-- as the password to attempt a simple SQL injection. This fails, 
+but we can go to Burp suite and see the traffic that was generated. I send the POST 
+request to Intruder using Ctrl+I, and start attempting to brute force the password
+field using rockyou.txt. In a real engagement, I am not sure I would immediately 
+start attempting a brute force attack because of how noisy it is, but for a CTF like
+this I think it will be fine. I let the brute force run in the background.
+
+With the brute force running in the background, I try to set up another attack on 
+the login page using SQLmap. Ultimately it seems like the attack is failing, so I 
+fire up Wireshark to look at the generated traffic and the responses don't seem to be
+comprehensible webpages but include 200 OK confirmations, I don't know enough about 
+the weird responses to fix what's going on so I move on. 
+
+It turns out that robots.txt did contain something useful. The password for the login.
+I now have logged into the site and are presented with what is effectively a php webshell.
+Immediately I start enumeration, using ls to check the current directory, and when trying
+to cat a local file I am met with an error message. Skipping past my inability to use cat,
+I go verify other information to check what user I am, the version of the OS, current user
+sudo privileges. When I see that the current user has sudo privileges, I attempt to use 
+socat but it gets filtered. I then try to use nc to spawn a reverse shell, but this 
+also does not seem to immediately work. Then, I check to see if python3 is installed using 
+python3 --version. This responds with the python version, so I then submit a python3 reverse
+shell script. This works. 
+
+With our initial reverse shell working and connected to our nc listener, the first thing I 
+want to do is upgrade the shell to be more stable and to use an encrypted connection. To 
+do this, I use a pre-compiled binary for socat, checking the host OS and architecture again
+to make sure I send over the correct file. I start a python http server on my attacking
+machine, navigate to a folder I have write access to on the remote host, and wget 
+the precompiled copy of socat. 
+
+After generating SSL certificates and setting up a listener for an encrypted, stable socat 
+channel on the attacker machine, we go to our python reverse shell and start up a socat 
+reverse shell. The connection is caught, and now we have a fully interactive, encrypted 
+reverse shell. Using this shell, we go to remove the filter on the webshell page to make 
+it easier to regain access in the future. In other scenarios, we might want to modify
+settings to only give ourselves access or even add authentication to allow only ourselves
+to bypass the filters using a keyword. 
+
+With our stable reverse shell, we can do enumeration to find the ingredients. The first
+ingredient is in the server directory and we can easily read it. We can find a second
+ingredient using 'find / -type f -name "*gredien*" 2>/dev/null'. I was not sure if there
+would be unusual spellings, number substitutions, or capitalized letters in the file name,
+so I tried to do a substring of the word. Thankfully this found what I was looking for and 
+the second ingredient was found. The third ingredient did not show up in the search, however,
+so more digging had to be done. 
+
+I started by checking the /home directory, and saw there were two users. The ubuntu user
+seemed to have a blank folder on first glance, which seemed unusual. After doing ls -la,
+I saw that there were a few different hidden files. Suspicious of these hidden files, I 
+started by reading the .bash_history file. While reading this file, I ended up finding 
+the third ingredient unexpectedly. 

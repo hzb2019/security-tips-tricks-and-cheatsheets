@@ -1,0 +1,6 @@
+_____
+OSINT
+
+  https://github.com/laramies/theHarvester ((gathers emails, subdomains, IP's, and URLs))
+  https://hunter.io/ ((gathers email contact info connected to domains))
+  https://osintframework.com/ ((collection of tools based on category))
