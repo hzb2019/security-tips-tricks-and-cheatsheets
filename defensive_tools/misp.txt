@@ -1,0 +1,28 @@
+
+https://www.misp-project.org/
+
+MISP serves as an IOC database, performs Automatic Correlation, allows for Data Sharing, 
+includes import and export features, displays Event Graphs, and has API support. 
+
+The following terms are commonly used within MISP and are related to the functionalities described 
+above and the general usage of the platform:
+
+  Events: Collection of contextually linked information.
+  Attributes: Individual data points associated with an event, such as network or system indicators.
+  Objects: Custom attribute compositions.
+  Object References: Relationships between different objects.
+  Sightings: Time-specific occurrences of a given data point or attribute detected to provide more credibility.
+  Tags: Labels attached to events/attributes.
+  Taxonomies: Classification libraries are used to tag, classify and organise information.
+  Galaxies: Knowledge base items used to label events/attributes.
+  Indicators: Pieces of information that can detect suspicious or malicious cyber activity.
+
+Minimal subset of Tags
+  The following tags can be considered a must-have to provide a well-defined event for distribution:
+
+  Traffic Light Protocol: Provides a colour schema to guide how intelligence can be shared.
+  Confidence: Provides an indication as to whether or not the data being shared is of high quality and 
+              has been vetted so that it can be trusted to be good for immediate usage.
+  Origin: Describes the source of information and whether it was from automation or manual investigation.
+  Permissible Actions Protocol: An advanced classification that indicates how the data can be used to 
+                                search for compromises within the organisation.

