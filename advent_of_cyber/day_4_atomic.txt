@@ -1,0 +1,22 @@
+Get-Help Invoke-Atomictest
+
+_________________________
+INVOKE-ATOMICTEST OPTIONS
+
+  Example Usage: 
+  Invoke-AtomicTest T1566.001 -ShowDetails
+  Invoke-AtomicTest T1566.001 -ShowDetailsBrief
+  Invoke-AtomicTest T1566.001 -CheckPrereqs
+  Invoke-AtomicTest T1566.001 -TestNames "Download Macro-Enabled Phishing Attachment"
+  Invoke-AtomicTest T1566.001 -TestGuids 114ccff9-ae6d-4547-9ead-4cd69f687306
+  Invoke-AtomicTest T1566.001 -TestNumbers 2,3
+  Invoke-AtomicTest T1566.001 -TestNumbers 2 -Cleanup
+
+_________________
+CLEAR SYSMON LOGS
+
+  - Open up Event Viewer by clicking the icon in the taskbar, or searching for it in the Start Menu.
+  - Navigate to Applications and Services => Microsoft => Windows => Sysmon => Operational on the 
+    left-hand side of the screen.
+  - Right-click Operational on the left-hand side of the screen and click Clear Log. Click Clear 
+    when the popup shows.
