@@ -1,0 +1,49 @@
+
+https://github.com/virustotal/yara
+
+https://yara.readthedocs.io/en/stable/writingrules.html
+
+IMPORTANT KEYWORDS:
+  Meta - Reserved for descriptive information written by the author of the rule, similar to code comments.
+  Desc - Use in meta section, summarizes the rules.
+  Strings - Searches for specific strings or hex in files. Examples: 
+    rule helloworld_checker{
+	  strings:
+		$hello_world = "Hello World!"
+
+      condition:
+        $hello_world
+    }
+
+    rule helloworld_checker{
+      strings:
+        $hello_world = "Hello World!"
+        $hello_world_lowercase = "hello world"
+        $hello_world_uppercase = "HELLO WORLD"
+
+      condition:
+        any of them
+    }
+  Conditions - Uses standard boolean operators. Examples:
+    >=, <=, >, <, !=, and, or, not, 
+
+    rule helloworld_checker{
+	  strings:
+		$hello_world = "Hello World!" 
+        
+      condition:
+        $hello_world and filesize < 10KB 
+    }
+  Weight 
+
+Malware sandbox that facilitates automatic generation of yara rules: https://cuckoosandbox.org/
+Facilitates creation of rules based on the Windows Portable Executable structure: https://pypi.org/project/pefile/
+
+LOKI - FOSS IOC scanner: https://github.com/Neo23x0/Loki/blob/master/README.md
+THOR - IOC and YARA scanner: https://www.nextron-systems.com/thor-lite/
+FENRIR - 3rd iteration scanner: https://github.com/Neo23x0/Fenrir
+YAYA - FOSS YARA ruleset manager: https://www.eff.org/deeplinks/2020/09/introducing-yaya-new-threat-hunting-tool-eff-threat-lab
+yarGen - YARA rule generator: https://github.com/Neo23x0/yarGen
+yarAnalyzer - ???: https://github.com/Neo23x0/yarAnalyzer/
+
+Premade yara rulesets: https://github.com/InQuest/awesome-yara
