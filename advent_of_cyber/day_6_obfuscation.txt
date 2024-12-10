@@ -1,0 +1,11 @@
+
+  floss.exe [TARGET EXE] | Out-file [FILE.txt]
+
+Sysmon manual XML filter query:
+<QueryList>
+  <Query Id="0" Path="Microsoft-Windows-Sysmon/Operational">
+    <Select Path="Microsoft-Windows-Sysmon/Operational">
+      *[System[(EventRecordID="INSERT_EVENT_record_ID_HERE")]]
+    </Select>
+  </Query>
+</QueryList>
