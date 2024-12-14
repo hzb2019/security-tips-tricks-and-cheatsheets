@@ -1,0 +1,61 @@
+
+Snort is both a Network Intrusion Detection System (NIDS) and a Network
+Intrusion Prevention System (NIPS). As a NIDS, it can generate alerts for
+suspicious traffic patterns, and as a NIPS, it can identify and block 
+potentially malicious activity on its own. It also acts as a traffic logger
+similar to tcpdump. 
+
+Default configs located at /etc/snort
+
+_______
+OPTIONS
+
+  -c [CONFIGFILE] ((use additional config files -- 
+                    can be used with a rules file to run without configs in IDS/IPS mode))
+  -T ((testing configuration))
+  -q ((quiet mode))
+  -V ((show version))
+  -v ((verbose))
+  -d ((display packet data (payload)))
+  -e ((display link layer headers))
+  -X ((display packet details in hex))
+  -i [INTERFACE] ((choose which network interface to sniff))
+  -l [PATH] ((logging mode, write log to [PATH]))
+  -K [FORMAT] ((log packets in specific format, eg. ASCII))
+  -r [LOGFILEPATH] ((read log))
+  -n [INT] ((read [INT] packets))
+
+  -N ((disable logging in IDS/IPS mode))
+  -D ((background task))
+  -A [full/fast/console/cmg/none] ((alert modes))
+  
+  -Q --daq [MODULE] ((IPS mode, ex. [MODULE] afpacket ))
+
+  -r/--pcap-single=[PCAP] ((read pcap))
+  --pcap-list="[SPACE SEPARATED LIST]" ((read pcaps))
+  --pcap-show ((show pcap name on console while processing))
+
+_________
+FILTERING
+
+  Extra references:
+    https://en.wikipedia.org/wiki/Berkeley_Packet_Filter
+    https://biot.com/capstats/bpf.html
+    https://www.tcpdump.org/manpages/tcpdump.1.html
+
+  Basic filtering examples:
+    sudo snort -r logname.log -X
+    sudo snort -r logname.log icmp
+    sudo snort -r logname.log tcp
+    sudo snort -r logname.log 'udp and port 53'
+  
+_____
+RULES
+
+  Actions: [alert/log/drop/reject]
+  Protocol: [IP/TCP/UDP/ICMP] ((further filtering by port is possible))
+  IP Filtering: (!)[SINGLE IP/CIDR IP RANGE] OR (!)[[CIDR IP RANGE, CIDR IP RANGE]]
+  Port Filtering: (!)[SINGLE PORT/(RANGE START):(RANGE END)] OR (!)[PORT, PORT]
+  Direction: [->/<>] ((src->dst and bidirectional))
+  
+
