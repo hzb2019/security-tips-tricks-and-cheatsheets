@@ -1,0 +1,31 @@
+
+
+Azure Key Vault:
+  This key vault holds anything from API keys, certificates, passwords, cryptographic keys,
+  and more. Individual vaults are created and managed by vault owners who have full access
+  to those vaults. Auditing may be enabled to keep records of who accesses what and
+  permissions assigned to allow users to access the vault (vault consumers).
+
+Entra ID (formerly known as Azure AD):
+  An Identity and Access Management (IAM) service. It has the information to determine
+  whether or not a user has the proper access permissions for a resource. 
+
+Azure Cloud Shell:
+  A preconfigured Bash or PowerShell CLI for managing Azure resources. 
+
+________
+COMMANDS
+
+  common syntax:
+  az [GROUP] [SUBGROUP] [ACTION] [PARAMS]
+
+  az ([GROUP]) -h ((show available commands (for [GROUP])))
+  az login ((not necessary if you're already signed into the Azure portal))
+  az ad signed-in-user show ((view currently logged in user))
+  az ad user list ((list all users in tenant))
+  az ad user list --filter "startsWith('[STRING]', displayName)" ((filter for names that contain [STRING]))
+  az ad group list ((list all groups in tenant))
+  az role assignment list --assignee [GROUP_ID] --all ((enumare roles for [GORUP_ID] from the group list command))
+  az keyvault list ((list key vaults accessible by current user))
+  az keyvault secret list --vault-name [NAME] ((list/show secrets contained in vault [NAME]))
+  az keyvault secret show --vault-name [VAULT] --name [NAME] ((show [NAME] secret contained in vault [VAULT] ))
