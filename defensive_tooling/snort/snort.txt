@@ -6,6 +6,7 @@ potentially malicious activity on its own. It also acts as a traffic logger
 similar to tcpdump. 
 
 Default configs located at /etc/snort
+Default log path at /var/log/snort
 
 _______
 OPTIONS
@@ -35,8 +36,8 @@ OPTIONS
   --pcap-list="[SPACE SEPARATED LIST]" ((read pcaps))
   --pcap-show ((show pcap name on console while processing))
 
-_________
-FILTERING
+______________
+FILTERING LOGS
 
   Extra references:
     https://en.wikipedia.org/wiki/Berkeley_Packet_Filter
@@ -49,6 +50,12 @@ FILTERING
     sudo snort -r logname.log tcp
     sudo snort -r logname.log 'udp and port 53'
   
+____________
+IPS/IDS MODE
+
+Run snort using -Q --daq [MODULE] where [MODULE] is most likely going to be afpacket. 
+This mode requires two interfaces configured to run properly, do so using -i [IF1]:[IF2]
+
 _____
 RULES
 
