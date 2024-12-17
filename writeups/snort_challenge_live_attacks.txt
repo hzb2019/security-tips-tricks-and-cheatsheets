@@ -1,2 +1,43 @@
 
-  
+For this challenge, we are given two VM's which are constantly receiving simulated attack traffic.
+We need to use the tool Snort to diagnose and take action against the attack.
+
+For the first VM, I immediately open up bash and make a directory on the desktop to hold the logs
+I am about to collect for easy access. After cd'ing into that directory, I run the command
+  sudo snort -A full -l . -K ASCII
+so that snort does full alert logging and separates the traffic into individual files and folders
+that are quick and easy to parse. After waiting a few seconds, I start another shell, cd into the
+log folder, and run 
+  sudo chmod -R +rwx ./*
+to make all the newly written log folders and files readable. Then I open the file explorer and 
+start poking through the folders. 
+
+The first folder does not seem to have anything particularly unusual, some traffic to port 443,
+a reasonable amount of log files. The second folder raises a lot of red flags. A massive amount
+of text files, all of which destined for tcp port 22. Looks like this is an SSH brute force
+attempt. I check the third IP address folder and don't seem anything particularly unusual, so
+I proceed to writing a rule to block this attacker.
+
+I open up vim and write the rule:
+  drop tcp [attacker ip] any -> any 22 (msg:"Stop SSH brute force attack";sid:100001;rev:1;)
+
+I control+c stop the instance of snort that is currently logging traffic, and test my rule with:
+  sudo snort -c snort.rules -Q --daq afpacket -i eth0:eth1 -A console -T
+seeing that the rule is correct, I remove the -T to see if the packets are being filtered
+as expected. The console floods with my rule alert message, so I ctrl+c to stop that instance
+and finally I run it as instructed to obtain the flag with:
+  sudo snort -c snort.rules -Q --daq afpacket -i eth0:eth1 -A full
+
+After a few seconds the flag shows up on the desktop.
+
+
+The second VM I do essentially the same thing as the first for the initial logging, except
+this one seems to be accessed by multiple different attacker IP addresses. I see two attacker
+IP addresses communicating over tcp port 4444 - the default for somebody using Metasploit. 
+
+The rule for this one looks something like:
+  drop tcp [attacker ip],[attacker ip] any -> any 4444 (msg:"Stop metasploit communication";......)
+
+Once again, I do the same steps for testing this rule, and run the same command as before for
+the ultimately successful filtering rule. The flag shows up on the desktop seconds after running
+snort.
