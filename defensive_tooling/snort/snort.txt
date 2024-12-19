@@ -6,6 +6,8 @@ potentially malicious activity on its own. It also acts as a traffic logger
 similar to tcpdump. 
 
 Default configs located at /etc/snort
+                                     /snort.conf is the main config file
+                                     /local.rules for user-generated rules
 
 _______
 OPTIONS
@@ -57,5 +59,51 @@ RULES
   IP Filtering: (!)[SINGLE IP/CIDR IP RANGE] OR (!)[[CIDR IP RANGE, CIDR IP RANGE]]
   Port Filtering: (!)[SINGLE PORT/(RANGE START):(RANGE END)] OR (!)[PORT, PORT]
   Direction: [->/<>] ((src->dst and bidirectional))
-  
+
+  Options: ((semicolon separated list in parentheses))
+    msg: "[MESSAGE]"
+    sid: [SID] ((snort rule ID))
+    rev: [REVISION]
+    reference: [REFERENCE] ((reference to explain the reasoning for the rule/pattern, link to CVE, etc))
+
+    Payload Detection Options:
+      content:"[CONTENT]" ((case sensitive, can be used multiple times in one rule))
+      nocase ((disables case sensitivity))
+      fast_pattern ((used once per rule, used after content intended to be the initial match))
+
+    Non-Payload Detection Options:
+      id: [ID] ((filtering the IP id field))
+      flags: [F/S/R/P/A/U] ((FIN/SYN/RST/PSH/ACK/URG TCP flags))
+      dsize: [(INT<)(>INT)] ((filter payload size))
+      sameip ((filter when src ip == dst ip))
+
+  Rulesets: https://www.snort.org/downloads 
+
+_______
+CONFIGS
+
+  Network Variables:
+    HOME_NET ((network to protect))
+    EXTERNAL_NET ((should be pretty much anything that is not HOME_NET))
+    RULE_PATH ((hard coded path for rules file))
+    SO_RULE_PATH ((so_rules path))
+    PREPROC_RULE_PATH ((plugin_rules path))
+
+  Decoder Configs:
+    #config daq: [CONFIG]
+    #config daq_mode: [MODE]
+    #config logdir: [LOGPATH]
+    
+    Data AcQuisition modules are libraries for packet I/O and improve packet processing:
+      Pcap: Default mode, known as Sniffer mode.
+      Afpacket: Inline mode, known as IPS mode.
+      Ipq: Inline mode on Linux by using Netfilter. It replaces the snort_inline patch.  
+      Nfq: Inline mode on Linux.
+      Ipfw: Inline on OpenBSD and FreeBSD by using divert sockets, with the pf and ipfw firewalls.
+      Dump: Testing mode of inline and normalisation.
+
+  Output Plugin Configs: Manages IDS/IPS outputs like logging and alert formatting. 
+
+
+
 

@@ -1,0 +1,23 @@
+
+Written while completing https://tryhackme.com/r/room/snortchallenges1
+
+__________________
+TASK 3/FTP TRAFFIC
+
+  alert tcp any 21 <> any any (msg:"Traffic through TCP port 21";sid:10001;rev:1;)
+  alert tcp any 21 <> any any (msg:"Failed FTP Login Attempt";content:"530 User";sid:10002;rev:1;)
+  alert tcp any 21 <> any any (msg:"Successful FTP Login Attempt";content:"230 User";sid:10003;rev:1;)
+  alert tcp any 21 <> any any (msg:"FTP Login Attempt Initiated";content:"331 Password";sid:10004;rev:1;)
+  alert tcp any 21 <> any any (msg:"Successful Administrator FTP Login Attempt";content:"User Administrator";sid:10005;rev:1;)
+
+______________________
+TASK 4/DETECTING FILES
+
+  alert tcp any any <> any any (msg:"PNG image found";content:".png";sid:100002;rev:1;)
+  alert tcp any any <> any any (msg:"GIF file found";content:"gif";sid:100003;rev:1;)
+
+_________________________________
+TASK 5/DETECTING TORRENT METAFILE
+
+  alert tcp any any <> any any (msg:"Torrent file detected";content:".torrent";sid:100001;rev:1;)
+
