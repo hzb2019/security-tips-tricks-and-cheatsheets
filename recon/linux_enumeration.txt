@@ -17,6 +17,7 @@ COMMANDS
     find / -type d -perm -a=xrw 2>/dev/null; find all folders with global read/write/execute perms
     find / -type f -perm -04000 -ls 2>/dev/null; list files with SUID or SGID bits set
     find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u; list folders with write permissions
+    find / -type f -name flag.txt 2>/dev/null;
 
   locate
   cut

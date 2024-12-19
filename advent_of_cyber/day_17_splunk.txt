@@ -1,0 +1,14 @@
+
+
+Show all ingested logs (select "All time" on the search bar dropdown): index=*
+Count x by column y: index=[INDEX] | stats count([PROPERTY]) by [PROPERTY]
+Show rare properties: index=[INDEX] | rare [PROPERTY]
+Format a table of info: index=[INDEX] | table [PROPERTY] ([PROPERTY]) (...)
+
+Improving log extraction:
+  Go to the settings dropdown menu at the top of the site, select "Fields" then at the Fields page,
+  select "Field extractions". (If it exists,) Find the previously created regex and delete it. 
+  Click the "Open Field Extractor" button at the top of the page. Choose the source type, set the 
+  time range, then choose to write a custom regex. Save the regex, then save and finish creating 
+  the extractor.
+
