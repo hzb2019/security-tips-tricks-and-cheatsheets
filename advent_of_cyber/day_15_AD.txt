@@ -1,0 +1,125 @@
+
+AD Architecture Building Blocks:
+  Domains: Logical grouping of resources including users, computers, and services.
+           Main organizational unit for administration and are identified by Domain
+           Component and Domain Controller names. Contents of a domain are subject
+           to the same rulesets.
+  Organizational Units: Containers in a domain for organizing groups of objects
+  Forest: A collection of one or more domains sharing schema, configs, and global catalogue
+  Trust Relationships: These allow users in one domain to access resources in another
+                       domain in the same forest according to the relationship configs
+
+All the above building blocks create the Distinguished Name (DN) that an object belongs
+to in AD. ex. DN=CN=Mayor Malware, OU=Management, DC=wareville, DC=thm
+
+Core AD Components
+  Domain Controllers: The servers that host AD services. Includes DB storage and handling
+                      auth. Multiple DC's can exist within a domain for redundancy. Changes
+                      to the entire AD instance will be replicated across all DC's.
+  Global Catalog: GC is a searchable database containing a subset of info from all objects
+                  in the directory, allowing users and services to locate objects in any 
+                  domain in the forest.
+  Lightweight Directory Access Protocol (LDAP): AD uses this protocol to query and modify
+                                                the directory, allowing for fast searching  
+                                                and retrieving info about objects.
+  Kerberos Authentication: Default auth protocol used by AD using tickets rather than pw's.
+
+Group Policy: Allows admins to enforce policies across the domain. Can be applied to users
+              and computers to enforce pw policies, software deployment, firewall configs
+
+Group Policy Objects: GPO's hold the group policies, and can be linked to the entire domain,
+                      an OU, or a site
+
+_______________
+PASSWORD POLICY
+
+  Run gpmc.msc 
+  Right click the intended domain, select "Create a GPO in this domain, and Link it here"
+  Give it an appropriate name eg. Password Policy
+  Right click the group policy -> Select "Edit"
+  Navigate to Computer Configuration -> Policies -> Windows Settings -> Security Settings
+  -> Account Policies -> Password Policy
+
+____________________
+GOLDEN TICKET ATTACK
+
+  This attack exploits AD by forging a Ticket Granting Ticket (TGT), allowing the attacker
+  to impersonate any account on the AD.
+
+  Requirements:
+    Fully Qualified Domain Name (FQDN) of the domain
+    SID of the domain
+    Username of an account to impersonate
+    KRBTGT account password hash - note, cracked password not necessary
+
+  Detections:
+    Event ID 4768: Look for TGT requests for high-privilege accounts
+    Event ID 4672: Logs when special privileges are assigned to a user
+
+_____________
+KERBEROASTING
+
+  An attack in which the attacker requests service tickets for accounts with Service
+  Principal Names (SPNs), extracts the tickets and password hashes, then cracks them
+  offline to retrieve passwords. 
+
+  Mitigation: Implementing secure password policies across the AD
+
+_______________
+PASS-THE-TICKET
+
+  Steals Kerberos tickets from a compromised machine and uses them to authenticate
+  as the user or service from which the ticket was stolen. 
+
+  Detections:
+    Event ID 4768: Monitor for suspicious logins, particularly locations or devices
+    Event ID 4624: Successful login - check to see the tickets being used for auth
+
+_______________
+MALICIOUS GPO'S
+
+  GPO's can be exploited by attackers to create persistent privileged accounts and 
+  distribute and execute malware. 
+
+  Mitigation: Regularly audit GPO's for changes, ensure strict modify permissions are setup
+
+___________________
+SKELETON KEY ATTACK
+
+  Installation of a malware backdoor to login to any account using a master password
+  (skeleton key). Original passwords for the accounts are unchanged, simply bypassed
+  by authentication with the skeleton key.
+
+__________________________
+INVESTIGATING AN AD BREACH
+
+  Check Group Policies:
+    Investigate GPO's:
+      Get-GPO -All
+    Investigate GPO with [NAME]:
+      Get-GPOReport -Name [NAME] -ReportType HTML -Path [OUTFILE]
+    Get GPO's and sort by modification times (check for recent unusual activity):
+      Get-GPO -All | Where-Object { $_.ModificationTime } | Select-Object DisplayName, ModificationTime 
+    
+  Event Viewer:
+    Useful ID's:
+      4624 - User account successful login 
+      4625 - User account failed login
+      4672 - Special privileges assigned to user 
+      4768 - Kerberos TGT was requested for a high-privilege account
+
+  User Auditing:
+    Check locked out accounts:
+      Search-ADAccount -LockedOut | Select-Object Name, SamAccountName, LockedOut, LastLogonDate, DistinguishedName
+    List all users and their groups:
+      Get-ADUser -Filter * -Properties MemberOf | Select-Object Name, SamAccountName, @{Name="Groups";Expression={$_.MemberOf}}
+
+  Check PowerShell history and logs:
+    %APPDATA%\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+
+    Event Viewer: 
+    Application and Services Logs -> Microsoft -> Windows -> PowerShell -> Operational 
+    Application and Service Logs -> Windows PowerShell
+
+
+
