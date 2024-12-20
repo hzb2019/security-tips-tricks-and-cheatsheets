@@ -1,0 +1,38 @@
+
+Intercept all function call values:
+  frida-trace [EXECUTABLE] -i *
+Intercept all function call values from files matching a pattern:
+  frida-trace [EXECUTABLE] -i '[PATTERN]!*'
+
+Basic format:
+  // Frida JavaScript script to intercept `say_hello` 
+  Interceptor.attach(Module.getExportByName(null, "say_hello"), { 
+      onEnter: function (log, args, state) { }, 
+      onLeave: function (log, retval, state) { } 
+  });
+  
+Use pointers and not variables to ensure the values are persistent through the
+function return. 
+
+Example (intercepts say_hello function call, replaces the original argument value
+and replaces it with a pointer to a custom value we control):
+  // say_hello.js
+  // Hook the say_hello function from libhello.so
+
+  // Attach to the running process of "main"
+  Interceptor.attach(Module.findExportByName(null, "say_hello"), {
+      onEnter: function (args) {
+          // Intercept the original argument (args[0] is the first argument)
+          var originalArgument = args[0].toInt32();
+          console.log("Original argument: " + originalArgument);
+          // Replace the original value with 1337
+          args[0] = ptr(1337);
+          log('say_hello()');
+      }
+  });
+
+Function parameter naming convention is 
+  i = integer: log(args[0].toInt32());
+  iii = 3 integers log(args[i].toInt32());
+  PKc = cstring: log(Memory.readCString(args[0]));
+
