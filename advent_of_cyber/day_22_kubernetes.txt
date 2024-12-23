@@ -1,0 +1,24 @@
+
+Kubernetes is a container orchestration system (e.g. for scaling microservices)
+
+Kubernetes containers run in pods, which are run on nodes, which make up a cluster.
+Because containers tend to have very short lifespans (one study found 70% live 5 minutes or
+less), it may be hard to check the logs on systems that disappear after they are no longer
+needed.
+
+________
+COMMANDS
+
+  minikube start
+  kubectl get pods -n wareville
+  kubectl exec -n wareville naughty-or-nice -it -- /bin/bash
+  kubectl get rolebindings -n wareville
+  kubectl describe rolebinding mayor-user-binding -n wareville
+  kubectl describe role mayor-user -n wareville
+  kubectl get secret pull-creds -n wareville -o jsonpath='{.data.\.dockerconfigjson}' | base64 --decode
+  docker ps
+  docker exec CONTAINTER NAME / ID ls -al /var/log
+  cat audit.log | grep --color=always '"user":{"username":"mayor-malware"' | grep --color=always '"resource"' | grep --color=always '"verb"'
+  cat audit.log | grep --color=always '"user":{"username":"system:serviceaccount:wareville:job-runner-sa"' | grep --color=always '"resource"' | grep --color=always '"verb"'
+  
+pods/exec permission allows a user to shell into the containers in a pod

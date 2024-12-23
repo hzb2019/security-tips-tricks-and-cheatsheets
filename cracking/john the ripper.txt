@@ -20,8 +20,9 @@ USEFUL OPTIONS
   For single crack:
     --single
 
-  For custom ruleset:
+  For using rule sets:
     --rule=[RULENAME]
+    Rulesets: [wordlist, single]
 
 _______________
 CUSTOM RULESETS
@@ -39,9 +40,11 @@ CUSTOM RULESETS
 
 _______________________
 CRACKING SPECIFIC FILES
-  Zip/Rar files:
-    [zip2john/rar2john] [ARCHIVE_PATH] > [OUTFILE]
+  Zip/RAR/PDF files:
+    [zip2john/rar2john/pdf2john.pl] [ARCHIVE_PATH] > [OUTFILE]
     john --wordlist=[WORDLIST_PATH] [OUTFILE]
+
+    reading the pdf afterwards: pdftotext [FILE] -upw [PASSWORD]
 
   SSH keys:
     [ssh2john/python3 ssh2john.py] [id_rsa private key file] > [OUTFILE]

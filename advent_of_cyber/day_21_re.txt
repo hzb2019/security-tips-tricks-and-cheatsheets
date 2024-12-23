@@ -1,0 +1,6 @@
+
+PEStudio: https://www.winitor.com/download
+ILSpy: https://github.com/icsharpcode/ILSpy
+PE Information: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format
+
+
