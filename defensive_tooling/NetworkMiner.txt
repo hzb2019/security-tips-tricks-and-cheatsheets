@@ -1,0 +1,8 @@
+
+ Main capabilities: traffic sniffing, parsing pcap files, protocol analysis, OS fingerprinting,
+ file extraction, credential grabbing, cleartext password parsing
+
+ Two main modes are traffic sniffing and pcap parsing/processing
+ Version 1.6 has various utilities that were later removed, consider keeping a copy
+
+ OS fingerprinting uses the Satori GitHub repo and p0f, and the MAC address database uses the mac-ages GitHub repo
