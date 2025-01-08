@@ -1,0 +1,101 @@
+
+  https://docs.zeek.org/en/current/script-reference/log-files.html
+  https://corelight.com/about-zeek/zeek-data
+
+  Zeek: Network Security Monitoring and Intrusion Detection System framework. Heavily
+  focused on network analysis. Event-based detections, heavily focused on specific threats
+  to trigger alerts. Commonly used for network monitoring, in-depth traffic analysis, and
+  intrusion detection in chained events.
+
+  Zeek operates by collecting packets, processing the packets into their constituent parts
+  ("events") in the event engine, then sends those events to the policy script interpreter
+  for semantic analysis.
+
+  /opt/zeek/logs ((default log path))
+
+_______
+OPTIONS
+
+  -v ((version))
+  -C ((ignore checksum errors))
+  -r [FILE] ((read file))
+  -s [FILE] ((use signature file))
+  
+_______
+ZEEKCTL
+
+  sudo su
+
+  zeekctl ([status/start/stop]) ((start zeek as a service))
+    status
+    start
+    stop
+
+________
+ZEEK-CUT
+
+  Use FIELDS not TYPES
+  cat, cut, grep, sort, uniq
+
+____________
+ZEEK FILTERS
+
+  Header:
+    src-ip
+    dst-ip
+    src-port
+    dst-port
+    ip-proto ((target protocol [TCP/UDP/ICMP/ICMP6/IP/IP6]))
+
+  Content:
+    payload ((packet payload))
+    http-request ((decoded HTTP requests))
+    http-request-header
+    http-request-body
+    http-reply-header
+    http-reply-body
+    ftp ((command line input of FTP sessions))
+
+  Context:
+    same-ip ((filtering source and destination ip addresses for dupes))
+
+  Action:
+    event ((signature match message))
+
+  Comparison Operators: ==, !=, <, <=, >, >=
+
+  NOTE! Filters accept string, numeric, and regex values
+
+__________________
+EXAMPLE SIGNATURES 
+
+  signature http-password {
+     ip-proto == tcp
+     dst-port == 80
+     payload /.*password.*/
+     event "Cleartext Password Found!"
+  }
+
+  # signature: Signature name.
+  # ip-proto: Filtering TCP connection.
+  # dst-port: Filtering destination port 80.
+  # payload: Filtering the "password" phrase.
+  # event: Signature match message.
+
+  signature ftp-admin {
+     ip-proto == tcp
+     ftp /.*USER.*dmin.*/
+     event "FTP Admin Login Attempt!"
+  }
+
+  signature ftp-username {
+    ip-proto == tcp
+    ftp /.*USER.*/
+    event "FTP Username Input Found!"
+  }
+
+  signature ftp-brute {
+     ip-proto == tcp
+     payload /.*530.*Login.*incorrect.*/
+     event "FTP Brute-force Attempt"
+  }
