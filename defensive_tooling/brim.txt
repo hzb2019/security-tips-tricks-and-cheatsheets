@@ -1,0 +1,37 @@
+
+_______________
+DEFAULT QUERIES
+
+  These are all located on the left panel under the "queries" tab in folder "Brim"
+
+  count() by _path | sort -r
+  For windows specific traffic: _path matches smb* OR _path=="dce_rpc" | sort -r _path
+  Unique network connections and transferred data: 
+    _path=="conn" | cut id.orig_h, id.resp_p, id.resp_h | sort | uniq
+    _path=="conn" | put total_bytes := orig_bytes + resp_bytes | sort -r total_bytes | cut uid, orig_bytes, resp_bytes, total_bytes
+  DNS and HTTP Methods:
+    _path=="dns" | count() by query | sort -r
+    _path=="http" | cut id.orig_h, id.resp_h, id.resp_p, method, host, uri | uniq -c
+  File Activity: filename!=null | cut _path, tx_hosts, rx_hosts, conn_uids, mime_type, filename, md5, sha1
+  IP subnet statistics: _path=="conn" | put classnet := network_of(id.resp_h) | cut classnet | count() by classnet | sort -r
+  Suricata Alerts:
+    event_type="alert" | count() by alert.severity, alert.category | sort count
+    event_type="alert" | alerts := union(alert.category) by src.ip, dest_ip
+    event_type="alert" | alerts := union(alert.category) by network_of(dest_ip)
+
+_____________
+BASIC QUERIES
+
+  Unique hosts: _path=="conn" | cut id.orig_h, id.resp_h | sort | uniq
+  Frequently communicated hosts: _path=="conn" | cut id.orig_h, id.resp_h | sort | uniq -c | sort -r
+  Most active ports: _path=="conn" | cut id.resp_p, service | sort | uniq -c | sort -r count
+  Most active ports: _path=="conn" | cut id.orig_h, id.resp_h, id.resp_p, service | sort id.resp_p | uniq -c | sort -r 
+  Long connections: _path=="conn" | cut id.orig_h, id.resp_p, id.resp_h, duration | sort -r duration
+  Transferred data: _path=="conn" | put total_bytes := orig_bytes + resp_bytes | sort -r total_bytes | cut uid, id, orig_bytes, resp_bytes, total_bytes
+  DNS queries: _path=="dns" | count () by query | sort -r
+  HTTP queries: _path=="http" | count () by uri | sort -r
+  Hostnames: _path=="dhcp" | cut host_name, domain
+  IP addresses: _path=="conn" | put classnet := network_of(id.resp_h) | cut classnet | count() by classnet | sort -r
+  Files: filename!=null
+  SMB activity: _path=="dce_rpc" OR _path=="smb_mapping" OR _path=="smb_files"
+  Known patterns: event_type=="alert" or _path=="notice" or _path=="signatures"
