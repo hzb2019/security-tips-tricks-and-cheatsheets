@@ -99,3 +99,73 @@ EXAMPLE SIGNATURES
      payload /.*530.*Login.*incorrect.*/
      event "FTP Brute-force Attempt"
   }
+
+____________
+ZEEK SCRIPTS
+
+  https://try.bro.org/#/?example=hello
+  https://docs.zeek.org/en/master/script-reference/scripts.html
+
+  /opt/zeek/share/zeek/base
+  /opt/zeek/share/zeek/site
+  /opt/zeek/share/zeek/policy
+  /opt/zeek/share/zeek/site/local.zeek
+
+  load @/script/path
+  load @script-name
+
+  local ((load all local scripts))
+
+  EXAMPLES:
+    event dhcp_message (c: connection, is_orig: bool, msg: DHCP::Msg, options: DHCP::Options)
+    {
+      print options$host_name;
+    }
+
+    event zeek_init()
+    {
+      print ("Started Zeek!");
+    }
+    event zeek_done()
+    {
+      print ("Stopped Zeek!");
+    }
+
+    event new_connection(c: connection)
+    {
+      print ("###########################################################");
+      print ("");
+      print ("New Connection Found!");
+      print ("");
+      print fmt ("Source Host: %s # %s --->", c$id$orig_h, c$id$orig_p);
+      print fmt ("Destination Host: resp: %s # %s <---", c$id$resp_h, c$id$resp_p);
+      print ("");
+    }
+
+    event signature_match (state: signature_state, msg: string, data: string)
+    {
+      if (state$sig_id == "ftp-admin")
+        {
+          print ("Signature hit! --> #FTP-Admin ");
+        }
+    }
+
+    signature ftp-admin {
+      ip-proto == tcp
+      ftp /.*USER.*admin.*/
+      event "FTP Username Input Found!"
+    }
+
+________
+PACKAGES
+
+  zkg
+      install [PATH/GITHUB_URL]
+      list
+      remove
+      refresh
+      upgrade
+
+  /opt/zeek/share/zeek/site
+
+  Cleartext submission of password: zeek/cybera/zeek-sniffpass
