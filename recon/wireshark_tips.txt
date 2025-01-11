@@ -1,5 +1,8 @@
 Packet Dissection: https://github.com/boundary/wireshark/blob/master/doc/README.dissector
 
+___________
+BASIC USAGE
+
 File->Merge
 Statistics->Capture File Properties
 Go->Go To Packet
@@ -11,3 +14,23 @@ File->Export Objects
 View->Time Display Format
 Analyze->Expert Information
 View->Colorize Conversation(->Reset)
+
+Statistics->Resolved Addresses
+          ->Protocol Hierarchy
+          ->Conversations
+          ->Endpoints
+
+Edit->Preferences->Name Resolution->Resolve transport names/Resolve network (IP) addresses
+Edit->Preferences->Name Resolution->MaxMind database directories
+
+_______
+FILTERS
+
+  examples:
+    http.server contains "Apache"
+    http.host matches "\.(php|html)"
+    tcp.port in {80 443 8080}
+    upper(http.server) contains "APACHE"
+    lower(http.server) contains "apache"
+    string(frame.number) matches "[13579]$"
+    
