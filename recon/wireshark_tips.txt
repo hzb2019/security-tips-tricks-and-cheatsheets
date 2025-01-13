@@ -26,6 +26,31 @@ Edit->Preferences->Name Resolution->MaxMind database directories
 _______
 FILTERS
 
+  tcp
+    .flags(.[ack/syn/reset/fin])
+  udp
+  arp
+    .opcode
+    .src.hw_mac
+    .dst.hw_mac
+    .duplicate-address-detected
+    .duplicate-address-frame
+  dhcp
+    .option
+      .dhcp
+      .hostname
+      .domain_name
+  bootp
+  kerberos
+  icmp
+  dns
+  ftp
+  http
+  http2
+  tls
+  ssdp
+
+
   examples:
     http.server contains "Apache"
     http.host matches "\.(php|html)"
@@ -34,3 +59,88 @@ FILTERS
     lower(http.server) contains "apache"
     string(frame.number) matches "[13579]$"
     
+  For detecting scans
+    connect: tcp.flags.syn==1 and tcp.flags.ack==0 and tcp.window_size > 1024 
+    SYN: tcp.flags.syn==1 and tcp.flags.ack==0 and tcp.window_size <= 1024
+    UDP: icmp.type==3 and icmp.code==3 
+  For ARP 
+    requests: arp.opcode == 1
+    responses: arp.opcode == 2
+    scanning: arp.dst.hw_mac==00:00:00:00:00:00
+    poisoning detection: arp.duplicate-address-detected or arp.duplicate-address-frame
+    flooding detection: ((arp) && (arp.opcode == 1)) && (arp.src.hw_mac == target-mac-address)
+  For DHCP 
+    request/ACK/NAK: dhcp.option.dhcp == [3/5/6]
+    request filtering: dhcp.option.hostname contains "keyword"
+    ACK filtering: dhcp.option.domain_name contains "keyword"
+  For NBNS filtering: nbns.name contains "keyword"
+  For kerberos 
+    user account search: kerberos.CNameString contains "keyword" 
+    host search: kerberos.CNameString and kerberos.CNameString contains "$"
+    protocol version: kerberos.pvno == 5
+    domain name for generated ticket: kerberos.realm contains ".org" 
+    service and domain name for gen ticket: kerberos.SNameString == "krbtg"
+  For low hanging icmp fruits: data.len > 64 and icmp
+  For low hanging DNS fruits: 
+    dns contains "dnscat"
+    dns.qry.name.len > 15 and !mdns ((!mdns disables local link device queries))
+  For FTP 
+    information request responses
+      system status: ftp.response.code == 211
+      directory status: ftp.response.code == 212
+      file status: ftp.response.code == 213
+    connection messages
+      service ready: ftp.response.code == 220
+      entering passive mode: ftp.response.code == 227
+      long passive mode: 228
+      extended passive mode: 229
+    authentication messages
+      user login: ftp.response.code == 230
+      user logout: ftp.response.code == 231
+      valid username: ftp.response.code == 331
+      invalid username or password: ftp.response.code == 430
+      no login, invalid password: ftp.response.code == 530
+    low hanging fruits
+      username/password/current work directory/list: ftp.request.command == "[USER/PASS/CWD/LIST]"
+      password: ftp.request.arg == "password"
+    advanced usages
+      ftp.response.code == 530
+      (ftp.response.code == 530) and (ftp.response.arg contains "username")
+      (ftp.request.command == "PASS" ) and (ftp.request.arg == "password")
+  For HTTP
+    requests: http.request
+    request methods: http.request.method == "[GET/POST]"
+    response codes: http.response.code == 200 
+      301 Moved Permanently: Resource is moved to a new URL/path (permanently).
+      302 Moved Temporarily: Resource is moved to a new URL/path (temporarily).
+      400 Bad Request: Server didn't understand the request.
+      401 Unauthorised: URL needs authorisation (login, etc.).
+      403 Forbidden: No access to the requested URL. 
+      404 Not Found: Server can't find the requested URL.
+      405 Method Not Allowed: Used method is not suitable or blocked.
+      408 Request Timeout:  Request look longer than server wait time.
+      500 Internal Server Error: Request not completed, unexpected error.
+      503 Service Unavailable: Request not completed server or service is down.
+    parameters
+      http.user_agent contains "nmap" 
+        sqlmap, nmap, Wfuzz, Nikto
+      http.request.uri contains "admin"
+      http.request.full_uri contains "admin"
+      http.server contains "apache"
+      http.host contains "keyword"
+      http.host == "keyword"
+      http.connection == "Keep-Alive"
+      data-text-lines contains "keyword"
+  For Log4j
+    http.request.method == "POST"
+    (ip contains "jndi") or ( ip contains "Exploit")
+    (frame contains "jndi") or ( frame contains "Exploit")
+    (http.user_agent contains "$") or (http.user_agent contains "==")
+  For HTTPS
+    TLS client request/server response: tls.handshake.type == [1/2]
+    client hello: (http.request or tls.handshake.type == 1) and !(ssdp) 
+    server hello: (http.request or tls.handshake.type == 2) and !(ssdp)
+
+
+
+
