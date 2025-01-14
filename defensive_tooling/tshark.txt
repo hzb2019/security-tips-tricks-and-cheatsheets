@@ -10,6 +10,10 @@ HELPFUL UTILITIES
   sed ((stream editor))
   awk ((scripting language that helps with pattern search and processing))
 
+  ex:
+    extract DNS queries: tshark -r dns-queries.pcap -T fields -e dns.qry.name | awk NF | sort -r | uniq -c | sort -r
+    extract user agents: tshark -r user-agents.pcap -T fields -e http.user_agent | awk NF | sort -r | uniq -c | sort -r
+
 _______
 OPTIONS
 
@@ -26,6 +30,30 @@ OPTIONS
   -x ((display packet bytes))
   -f ((add capture filters using BPF/Wireshark capture filters))
   -Y ((display filters, same as Wireshark display filters))
+  -T fields -e [FIELD NAME] (-e [FIELD NAME]...) -E header=y ((extract specific fields from packet data))
+  -z [OPTIONS] (-q) ((display statistics, comma separated options, -q suppresses packet info but still displays -z info))
+      help ((show help))
+      io,phs(,[PROTOCOL]) ((view protocol hierarchy (for [PROTOCOL])))
+      plen,tree ((view packet lengths tree))
+      endpoints,[PROTOCOL] ((view endpoint statistics for [PROTOCOL]))
+      conv,[PROTOCOL] ((view conversation statistics for [PROTOCOL]))
+      expert ((view expert info))
+      ptype,tree ((stats on IPv4 and IPv6 packets))
+      ip_hosts,tree ((stats on all IPv4 hosts))
+      ipv6_hosts,tree ((stats on all IPv6 hosts))
+      ip_srcdst,tree ((stats on source and destination IPv4 addresses))
+      ipv6_srcdst,tree ((stats on source and destination IPv6 addresses))
+      dests,tree ((stats on destination IPv4 addresses))
+      ipv6_dest,tree ((stats on destination IPv6 addresses))
+      dns,tree ((stats on DNS traffic))
+      http(2),tree ((stats on http(2) traffic))
+      http_srv,tree ((load distribution))
+      http_req,tree ((requests))
+      http_seq,tree ((requests and responses))
+      follow,[PROTOCOL],[VIEWMODE],[STREAM] ((follows [STREAM] of [PROTOCOL] traffic in [VIEWMODE] format))
+             [TCP/UDP/HTTP/HTTP2],[HEX/ASCII],[0/1/2...]
+      credentials
+
   capture conditions, multiple conditions allowed to be defined with extra flags set
     -a ((autostop, define capture conditions for a single run/loop))
         duration:[INTEGER] ((stop capture after [INTEGER] seconds is reached))
@@ -35,6 +63,9 @@ OPTIONS
         duration:[INTEGER] ((after [INTEGER] seconds, create new file for writing to))
         filesize:[INTEGER] ((after [INTEGER] kb, create new file for writing to))
         files:[INTEGER] ((rewrite the oldest file after [INTEGER] files have been written))
+
+  --color 
+  --export-objects [DICOM/HTTP/IMF/SMB/TFTP],[OUTFILE] (-q)
 
 _______________________
 EXAMPLE FILTERS
@@ -50,6 +81,8 @@ EXAMPLE FILTERS
     "ether host F8:DB:C5:A2:5D:81"
     "ip proto 1" ((https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml))
 
+  Wireshark display filter reference: https://www.wireshark.org/docs/dfref/
+
   display filters:
     'ip.addr == 10.10.10.10'
     'ip.addr == 10.10.10.0/24'
@@ -61,7 +94,9 @@ EXAMPLE FILTERS
     "http.response.code == 200"
     'dns'
     'dns.qry.type == 1'
-    
+    'http.server contains "Apache"'
+    'http.request.method matches "(GET|POST)"'
+
 
 
 
