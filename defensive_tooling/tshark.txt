@@ -1,0 +1,67 @@
+
+_________________
+HELPFUL UTILITIES
+
+  capinfos ((provides details for capture file, good for preliminary info))
+  grep
+  cut
+  uniq
+  nl ((counts number of displayed lines))
+  sed ((stream editor))
+  awk ((scripting language that helps with pattern search and processing))
+
+_______
+OPTIONS
+
+  ((no parameters will sniff traffic like tcpdump))
+  -h ((help page))
+  -v ((version info))
+  -D ((show available sniffing interfaces))
+  -i [INTERFACE] ((choose an interface for live pcap))
+  -r [FILE] ((read a capture file))
+  -c [INTEGER] ((stop capturing after [INTEGER] number of packets captured))
+  -w [OUTFILE] ((write to [OUTFILE]))
+  -V ((verbose))
+  -q ((quiet mode))
+  -x ((display packet bytes))
+  -f ((add capture filters using BPF/Wireshark capture filters))
+  -Y ((display filters, same as Wireshark display filters))
+  capture conditions, multiple conditions allowed to be defined with extra flags set
+    -a ((autostop, define capture conditions for a single run/loop))
+        duration:[INTEGER] ((stop capture after [INTEGER] seconds is reached))
+        filesize:[INTEGER] ((stop capture after [INTEGER] kb are written))
+        files:[INTEGER] ((stop capture after [INTEGER] files are written))
+    -b ((ring buffer control options, defines capture conditions for multiple - even infinite - runs/loops))
+        duration:[INTEGER] ((after [INTEGER] seconds, create new file for writing to))
+        filesize:[INTEGER] ((after [INTEGER] kb, create new file for writing to))
+        files:[INTEGER] ((rewrite the oldest file after [INTEGER] files have been written))
+
+_______________________
+EXAMPLE FILTERS
+
+  capture filters:
+    "host 10.10.10.10"
+    "net 10.10.10.0/24"
+    "port 80"
+    "portrange 80-100"
+    "src host 10.10.10.10"
+    "dst host 10.10.10.10"
+    "tcp" ((arp | ether | icmp | ip | ip6 | tcp | udp))
+    "ether host F8:DB:C5:A2:5D:81"
+    "ip proto 1" ((https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml))
+
+  display filters:
+    'ip.addr == 10.10.10.10'
+    'ip.addr == 10.10.10.0/24'
+    'ip.src == 10.10.10.10'
+    'ip.dst == 10.10.10.10'
+    'tcp.port == 80'
+    'tcp.srcport == 80'
+    'http'
+    "http.response.code == 200"
+    'dns'
+    'dns.qry.type == 1'
+    
+
+
+
