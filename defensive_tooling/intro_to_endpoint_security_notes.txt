@@ -1,0 +1,54 @@
+Normal Windows processes
+
+  (parent) > (child)
+  System Idle Process (0) > System
+  System
+  System > smss.exe
+  csrss.exe
+  wininit.exe
+  wininit.exe > services.exe
+  wininit.exe > services.exe > svchost.exe
+  lsass.exe
+  winlogon.exe
+  explorer.exe
+
+  if no parent is indicated, these processes should not have a parent process
+
+Sysinternals
+
+  All sysinternals tools fall into one of the following categories:
+    File and Disk Utilities
+    Networking Utilities
+    Process Utilities
+    Security Utilities
+    System Information
+    Miscellaneous
+    
+  TCPView - Networking utility tool showing all TCP and UDP endpoints running on the system
+  Process Explorer - Enables user to inspect details of a running process including services,
+  network traffic, handles like files or directories opened, and DLLs and memory-mapped files opened
+
+Windows Event Logs
+
+  Usually located at C:\Windows\System32\winevt\Logs
+
+  Readable using Event Viewer, Wevtutil.exe, or Get-WinEvent
+
+Sysmon
+
+  Tool for monitoring and logging events on Windows. Usually used with a SIEM.
+
+OSQuery 
+
+  Invoked by running osqueryi in cmd/PowerShell
+
+  Open source tool created by Facebook, allowing users to query endpoints using SQL syntax.
+  
+  Kolide Fleet allows for queries of multiple endpoints.
+
+Wazuh
+
+  FOSS Endpoint Detection and Response solution. Uses management agent model where managers 
+  are responsible for managing agents installed on devices to monitor.
+
+
