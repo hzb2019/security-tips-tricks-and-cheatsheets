@@ -1,0 +1,81 @@
+
+  https://docs.microsoft.com/en-us/archive/blogs/markrussinovich/
+  https://techcommunity.microsoft.com/t5/windows-blog-archive/bg-p/Windows-Blog-Archive/label-name/Mark%20Russinovich
+  https://www.youtube.com/watch?v=A_TPZxuTzBU
+  https://www.youtube.com/watch?v=vW8eAqZyWeo
+
+__________________
+SECURITY UTILITIES
+
+  https://docs.microsoft.com/en-us/sysinternals/downloads/security-utilities
+
+  Sysmon
+
+    https://tryhackme.com/room/sysmon
+
+    Official definition:
+      System Monitor (Sysmon) is a Windows system service and device driver that, 
+      once installed on a system, remains resident across system reboots to monitor 
+      and log system activity to the Windows event log. It provides detailed 
+      information about process creations, network connections, and changes to file 
+      creation time. By collecting the events it generates using Windows Event 
+      Collection or SIEM agents and subsequently analyzing them, you can identify 
+      malicious or anomalous activity and understand how intruders and malware operate 
+      on your network.
+
+__________________
+SYSTEM INFORMATION
+
+  https://docs.microsoft.com/en-us/sysinternals/downloads/system-information
+
+  WinObj
+
+    Official definition:
+      WinObj is a 32-bit Windows NT program that uses the native 
+      Windows NT API (provided by NTDLL.DLL) to access and display 
+      information on the NT Object Manager's name space.
+
+    Session 0 is the OS session and Session 1 is the User session
+    There should be at least 2 csrss.exe processes, one for each session
+    Session 1 is for the first user to login to the system
+
+    C:\>winobj -accepteula
+
+    Using WinObj to correlate Session WindowStation with Process Explorer csrss.exe values:
+      Go to WinObj, then navigate to \ > Sessions > [Session #] > Windows > WindowStations
+      The value contained here can then be correlated to the value found in Process Explorer
+      for the User mode csrss.exe value. When selecting csrss.exe in Process Explorer, in 
+      the window below the Process list window, "WindowStation" can be found at the bottom
+      of the "Type" field, and the WindowStation value can be correlated back to the 
+      WindowStation value for the specific Session number being investigated.
+
+_____________
+MISCELLANEOUS
+
+  https://docs.microsoft.com/en-us/sysinternals/downloads/system-information
+
+  BgInfo
+
+    Official description:
+      It automatically displays relevant information about a Windows 
+      computer on the desktop's background, such as the computer name, 
+      IP address, service pack version, and more.
+
+  RegJump
+
+    Official description:
+      This little command-line applet takes a registry path and makes Regedit open 
+      to that path. It accepts root keys in standard (e.g. HKEY_LOCAL_MACHINE) and 
+      abbreviated form (e.g. HKLM).
+
+    C:\>regjump -acceptula
+
+  Strings
+  
+    Official definition:
+      Strings just scans the file you pass it for UNICODE (or ASCII) 
+      strings of a default length of 3 or more UNICODE (or ASCII) 
+      characters. Note that it works under Windows 95 as well.
+
+    C:\>strings [FILE]
+    C:\>strings [FILE] | findstr /i [KEYWORD]* ((finds KEYWORD in strings found in FILE))
