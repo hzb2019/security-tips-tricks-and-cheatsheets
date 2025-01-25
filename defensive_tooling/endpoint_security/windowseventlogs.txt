@@ -59,9 +59,10 @@ EVENT VIEWER
 ____________
 WEVTUTIL.EXE
 
-  C:\>wevutil.exe (/?)
+  https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil
 
-  
+  C:\>wevutil.exe (/?)
+  C:\>wevutil.exe [COMMAND] /? 
 
 
 ____________
