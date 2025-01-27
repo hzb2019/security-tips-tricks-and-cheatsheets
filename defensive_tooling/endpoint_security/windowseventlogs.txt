@@ -64,7 +64,6 @@ WEVTUTIL.EXE
   C:\>wevutil.exe (/?)
   C:\>wevutil.exe [COMMAND] /? 
 
-
 ____________
 GET-WINEVENT
 
@@ -108,12 +107,43 @@ GET-WINEVENT
           ProviderName='WLMS' 
         }
 
-
 _____________
 XPATH QUERIES
 
+  Windows Event Log supports a subset of XPath 1.0: https://www.w3.org/TR/1999/REC-xpath-19991116/
+  https://docs.microsoft.com/en-us/windows/win32/wes/consuming-events#xpath-10-limitations
+  https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms256115(v=vs.100)
+
+  XPath definition:
+    The W3C created XPath, or XML Path Language in full, to provide a standard syntax and 
+    semantics for addressing parts of an XML document and manipulating strings, numbers, and 
+    booleans.
+
+  Windows Event Log XPath queries should start with '*' or 'Event'
+
+  Event Viewer > Details > XML View 
+  Craft queries with format '*/[TAG]/[TAG]/.../[TAG][OPERATOR][VALUE]'
+                        or  '*/[TAG]/[TAG]/.../[TAG][@[PROPERY][OPERATOR][VALUE]]
+  
+  Keyword 'and' can be used to combine queries
+
+  Example queries:
+    // The following query selects all events from the channel or log file where the severity level is less than or equal to 3 and the event occurred in the last 24 hour period. 
+    XPath Query: *[System[(Level <= 3) and TimeCreated[timediff(@SystemTime) <= 86400000]]]
+
+    Get-WinEvent -LogName Application -FilterXPath '*/System/EventID=100'
+
+    Get-WinEvent -LogName Application -FilterXPath '*/System/EventID=101 and */System/Provider[@Name="WLMS"]'
+
+    // EventData query
+    Get-WinEvent -LogName Security -FilterXPath '*/EventData/Data[@Name="TargetUserName"]="System"'
+
+    Get-WinEvent -LogName Application -FilterXPath '*/'
+  
 _________
 EVENT IDS
+
+  
 
 ____________________________
 PUTTING THEORY INTO PRACTICE
