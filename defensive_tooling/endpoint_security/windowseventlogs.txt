@@ -162,3 +162,28 @@ EVENT IDS
 
 ____________________________
 PUTTING THEORY INTO PRACTICE
+
+  Scenario 1 (Questions 1 & 2): 
+    Searched for "MITRE powershell downgrade" on google, then found the Event ID on the technique page.
+    
+    Load file into event viewer, create custom view for Event ID 400, copy timestamp
+
+  Scenario 2 (Questions 3 & 4): 
+    Search "MITRE windows log clear", go to detection section, found ID's 1100, 1102, 1104,
+    104, and 4104. Custom view for 1100, 1102, 1104, and 104. Found log clear event with ID
+    104. Looked at XML details to find EventRecordID and Computer name.
+
+
+  Scenario 3 (Questions 5, 6 & 7): 
+    Creating a filter for ID 4104 in Event Viewer and scrolling to the bottom shows us the
+    first command executed. Going to the XML details finds the rest of the relevant info.
+
+
+  Scenario 4 (Questions 8 & 9): 
+    Using an XPath query to search for the given path 
+    (Data[@Name="CallerProcessName"]="C:\Windows\System32\net1.exe")
+    we can find three event logs. Then making a custom view in Event Viewer using the timestamp
+    and Event ID of these logs, we can take a look at them. We can see one log in particular is
+    enumerating a group rather than an individual account, and we can use that log to answer
+    the questions.
+
