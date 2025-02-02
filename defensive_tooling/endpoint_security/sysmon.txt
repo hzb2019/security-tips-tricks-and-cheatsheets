@@ -9,8 +9,49 @@
 
   Sysmon events path: Applications and Services Logs/Microsoft/Windows/Sysmon/Operational
 
+  Installing sysmon:
+    Powershell: Download-SysInternalsTools C:\Sysinternals
+    https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon
+    https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite
 
-  Useful Event IDs to monitor:
+    Running sysmon: Sysmon.exe -accepteula -i [CONFIGFILE]
+
+    To use a different configuration, the existing configfile must be replaced
+
+
+  Sysmon event logs stored in event viewer at: Applications and Services Logs/Microsoft/Windows/Sysmon/Operational
+
+  "Best Practices":
+    Exclude > Include
+      Inclusions require you to know what to expect ahead of time, while exclusions only require you 
+      know how to filter normal expected activity.
+    CLI gives better control
+      Get-WinEvent/wevutil.exe for accessing and filtering logs
+    Know your environment before implementation
+      If you don't know what you're protecting, there's no way to differentiate normal from malicious activity.
+    
+  Common malware ports: https://docs.google.com/spreadsheets/d/17pSTDNpa0sf6pHeRhusvWG6rThciE8CsXTSlDUAZDyo
+
+________
+COMMANDS
+
+  Checking for events on a specific port in PowerShell:
+    Get-WinEvent -Path <Path to Log> -FilterXPath '*/System/EventID=3 and */EventData/Data[@Name="DestinationPort"] and */EventData/Data=[PORT]'
+
+  Checking for lsass.exe accesses:
+    Get-WinEvent -Path <Path to Log> -FilterXPath '*/System/EventID=10 and */EventData/Data[@Name="TargetImage"] and */EventData/Data="C:\Windows\system32\lsass.exe"'
+
+  Detecting remote thread creation:
+    Get-WinEvent -Path <Path to Log> -FilterXPath '*/System/EventID=8'
+
+_____________________
+SYSMON CONFIGURATIONS
+
+  https://github.com/SwiftOnSecurity/sysmon-config
+  https://github.com/ion-storm/sysmon-config/blob/develop/sysmonconfig-export.xml
+
+  
+  Useful Event IDs to monitor with example configs:
     Event ID 1: Process Creation
       <RuleGroup name="" groupRelation="or">
         <ProcessCreate onmatch="exclude">
@@ -69,28 +110,116 @@
         </DnsQuery>
       </RuleGroup> 
 
-  Installing sysmon:
-    Powershell: Download-SysInternalsTools C:\Sysinternals
-    https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon
-    https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite
+  Checking for events on a destination port:
+    <RuleGroup name="" groupRelation="or">
+      <NetworkConnect onmatch="include">
+        <DestinationPort condition="is">[PORT]</DestinationPort>
+      </NetworkConnect>
+    </RuleGroup>
 
-  Configs:
-    https://github.com/SwiftOnSecurity/sysmon-config
-    https://github.com/ion-storm/sysmon-config/blob/develop/sysmonconfig-export.xml
+    With exclusions for specific processes:
+      <RuleGroup name="" groupRelation="or">
+        <NetworkConnect onmatch="include">
+          <DestinationPort condition="is">1034</DestinationPort>
+          <DestinationPort condition="is">1604</DestinationPort>
+        </NetworkConnect>
+        <NetworkConnect onmatch="exclude">
+          <Image condition="image">OneDrive.exe</Image>
+        </NetworkConnect>
+      </RuleGroup>
 
-  Running sysmon:
-    Sysmon.exe -accepteula -i [CONFIGFILE]
+  Checking for file creation whose name contains string:
+    <RuleGroup name="" groupRelation="or">
+      <FileCreate onmatch="include">
+        <TargetFileName condition="contains">[STRING]</TargetFileName>
+      </FileCreate>
+    </RuleGroup>
 
-  Sysmon event logs stored in event viewer at: Applications and Services Logs/Microsoft/Windows/Sysmon/Operational
-
-  "Best Practices":
-    Exclude > Include
-      Inclusions require you to know what to expect ahead of time, while exclusions only require you 
-      know how to filter normal expected activity.
-    CLI gives better control
-      Get-WinEvent/wevutil.exe for accessing and filtering logs
-    Know your environment before implementation
-      If you don't know what you're protecting, there's no way to differentiate normal from malicious activity.
-    
+  Abnormal LSASS behavior (common when mimikatz/credential dumping tools are used):
+    <RuleGroup name="" groupRelation="or">
+      <ProcessAccess onmatch="exclude">
+        <SourceImage condition="image">svchost.exe</SourceImage>
+      </ProcessAccess>
+      <ProcessAccess onmatch="include">
+        <TargetImage condition="image">lsass.exe</TargetImage>
+      </ProcessAccess>
+    </RuleGroup>
 
 
+    When processes other than svchost.exe access LSASS, it is often unusual behavior, this detects that.
+
+  Checking for installation of persistence:
+    In start menu and startup paths:
+      <RuleGroup name="" groupRelation="or">
+        <FileCreate onmatch="include">
+          <TargetFilename name="T1023" condition="contains">\Start Menu</TargetFilename>
+          <TargetFilename name="T1165" condition="contains">\Startup\</TargetFilename>
+        </FileCreate>
+      </RuleGroup>
+
+    In registry keys:
+      <RuleGroup name="" groupRelation="or">
+        <RegistryEvent onmatch="include">
+          <TargetObject name="T1060,RunKey" condition="contains">CurrentVersion\Run</TargetObject>
+          <TargetObject name="T1484" condition="contains">Group Policy\Scripts</TargetObject>
+          <TargetObject name="T1060" condition="contains">CurrentVersion\Windows\Run</TargetObject>
+        </RegistryEvent>
+      </RuleGroup>
+
+  Checking for files using Alternate Data Streams:
+    <RuleGroup name="" groupRelation="or">
+      <FileCreateStreamHash onmatch="include">
+        <TargetFilename condition="contains">Downloads</TargetFilename>
+        <TargetFilename condition="contains">Temp\7z</TargetFilename>
+        <TargetFilename condition="ends with">.hta</TargetFilename>
+        <TargetFilename condition="ends with">.bat</TargetFilename>
+      </FileCreateStreamHash>
+    </RuleGroup>
+
+  Detecting remote threads:
+    <RuleGroup name="" groupRelation="or">
+      <CreateRemoteThread onmatch="exclude">
+        <SourceImage condition="is">C:\Windows\system32\svchost.exe</SourceImage>
+        <TargetImage condition="is">C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</TargetImage>
+      </CreateRemoteThread>
+    </RuleGroup>
+
+
+______________
+INVESTIGATIONS
+
+  Investigation 1 (Malicious files from a USB)
+    My first instinct was to do an XPath search for Event ID 11 for file creation but this did not
+    yield any results. The first part asks about the full registry key of the USB device calling
+    svchost.exe. Looking through the logs in Event Viewer details, we can see some events that set 
+    Registry values. It looks like it's for a USB device, and when submitted it's correct.
+
+    Next they want us to find the Device name for the RawAccessRead logs. We can find this in
+    XML View details under EventData. The last task is determining the first exe run by the
+    process, to do this we find the first Process Create logs made after setting the registry
+    values.
+
+  Investigation 2 (Execution of malicious HTML file)
+    Opening the logs in Event Viewer we see there are only three logs. To find the full path of the
+    payload, we can go to the XML View details of the first recorded Event and find the command executed 
+    on the command line. To find the path of the file it was masking itself as, scroll down in XML
+    view details to find the parent command line execution. Finally, the signed binary that executed
+    the payload is the "Image" in EventData. In the second Event we can see details about the connection.
+
+  Investigation 3 (Locating persistence)
+    3.1
+      We can find the IP, hostname, and C2 hostname in the earliest recorded Network Connection Event. 
+      The following Registry value set Event shows us where the payload was stored. 
+      The Registry value set Event prior to the Pipe Connected Event contains the PowerShell command
+      executed to launch the payload.
+
+    3.2
+      The Network connection Events prior to the Pipe Connected Events contain the IP of the adversary.
+      We can find the path to the payload location by finding the first Process Create Event and looking
+      through its details. 
+      The full command to create the scheduled task can be found by finding where the payload location
+      path is called again in a Process Create Event.
+      The suspicious behavior created by schtasks.exe is contained in Process accessed Event logs.
+      
+  Investigation 4 (Detecting C2 communications)
+    Open Network connection detected log, all relevant information is in details > XML View.
