@@ -1,0 +1,198 @@
+
+  For downloading individual tools: https://docs.microsoft.com/en-us/sysinternals/downloads/
+  Live URL: https://live.sysinternals.com/
+
+  Powershell command for downloading suite: Download-SysInternalsTools C:\Tools\Sysint
+
+  To modify environment variables: cmd > sysdm.cpl > advanced tab > environment variables > edit PATH
+
+_________________________
+RUNNING SYSINTERNALS LIVE
+
+  (For Windows Server) Install WebDAV Redirector:
+    Install-WindowsFeature WebDAV-Redirector –Restart
+    Get-WindowsFeature WebDAV-Redirector | Format-Table –Autosize ((after reboot, verify installation))
+
+  Enable webclient service: 
+    Open powershell > get-service webclient > start-service webclient > get-service webclient (check if it's running)
+
+  Enable Network Discovery:
+    control.exe /name Microsoft.NetworkAndSharingCenter 
+    Change advanced sharing settings > Turn on network discovery 
+
+  When webclient and Network Discovery (and WebDAV) have been installed and are running, the tools 
+  can be run directly from the web or from a network drive. 
+
+  Direct access:
+    C:\>\\live.sysinternals.com\tools\[executable]
+  
+  Network drive:
+    C:\>net use * \\live.sysinternals.com\tools\
+    C:\>cd [mounted drive label]
+    Y:\>
+
+_______________________
+FILE AND DISK UTILITIES
+
+  https://docs.microsoft.com/en-us/sysinternals/downloads/file-and-disk-utilities
+
+  Sigcheck
+
+    https://docs.microsoft.com/en-us/sysinternals/downloads/sigcheck
+
+    Official definition:
+      Sigcheck is a command-line utility that shows file version number, timestamp information, 
+      and digital signature details, including certificate chains. It also includes an option to 
+      check a file’s status on VirusTotal, a site that performs automated file scanning against 
+      over 40 antivirus engines, and an option to upload a file for scanning.
+
+    Check for unsigned files in System32:
+      sigcheck -u -e C:\Windows\System32
+      -u "If VirusTotal check is enabled, show files that are unknown by 
+          VirusTotal or have non-zero detection, otherwise show only unsigned files."
+      -e "Scan executable images only (regardless of their extension)"
+
+      any files that are detected warrant investigation
+
+  Streams
+
+    Official definition:
+      The NTFS file system provides applications the ability to create alternate data streams of 
+      information. By default, all data is stored in a file's main unnamed data stream, but by using 
+      the syntax 'file:stream', you are able to read and write to alternates.
+
+    Usage:
+      streams [PATH] -accepteula
+
+    Options:
+      -s Recurse subdirectories
+      -d Delete stream
+      -nobanner 
+
+    Output:
+      [PATH]:
+        :[something]:[STREAM] [LENGTH]
+
+      ex:
+        C:\Users\Administrator\Desktop\SysinternalsSuite.zip:
+          :Zone.Identifier:$DATA      185
+
+    Reading ADS stream:
+      Get-Item [PATH] | Get-Content -Stream [STREAM]
+
+      ex:
+        > streams file.txt -acceptula
+        >>> C:\Users\Administrator\Desktop\file.txt:
+        >>>  :ads.txt:$DATA 26
+        > Get-Item file.txt | Get-Content -Stream ads.txt
+        >>> [STREAM DATA]
+
+  SDelete
+
+    https://docs.microsoft.com/en-us/sysinternals/downloads/sdelete
+  
+    Official definition: 
+      SDelete is a command line utility that takes a number of options. In any given use, 
+      it allows you to delete one or more files and/or directories, or to cleanse the free 
+      space on a logical disk.
+
+_________________
+NETWORK UTILITIES
+
+_________________
+PROCESS UTILITIES
+
+  https://docs.microsoft.com/en-us/sysinternals/downloads/process-utilities
+
+  Autoruns
+
+    Official definition:
+      This utility, which has the most comprehensive knowledge of auto-starting locations 
+      of any startup monitor, shows you what programs are configured to run during system 
+      bootup or login, and when you start various built-in Windows applications like Internet 
+      Explorer, Explorer and media players. These programs and drivers include ones in your startup 
+      folder, Run, RunOnce, and other Registry keys. Autoruns reports Explorer shell extensions, 
+      toolbars, browser helper objects, Winlogon notifications, auto-start services, and much more. 
+      Autoruns goes way beyond other autostart utilities.
+
+    Malicious actors can use this to establish persistence.
+
+    Run with C:\>autoruns
+
+
+  ProcDump
+
+    https://docs.microsoft.com/en-us/sysinternals/downloads/procdump
+
+    Official definition:
+      ProcDump is a command-line utility whose primary purpose is monitoring an application for 
+      CPU spikes and generating crash dumps during a spike that an administrator or developer can 
+      use to determine the cause of the spike.
+
+    Right click on a process to create dumps
+
+
+  Process Explorer
+
+    Official definition:
+      The Process Explorer display consists of two sub-windows. The top window always shows a 
+      list of the currently active processes, including the names of their owning accounts, 
+      whereas the information displayed in the bottom window depends on the mode that Process 
+      Explorer is in: if it is in handle mode you'll see the handles that the process selected 
+      in the top window has opened; if Process Explorer is in DLL mode you'll see the DLLs and 
+      memory-mapped files that the process has loaded.
+
+    Run with: C:\procexp -accepteula
+
+    Useful options include: Verify Signatures, Run at Logon, Replace Task Manager
+
+    Color coding:
+      Purple: Files may be packed
+      Red: process is exiting
+      Green: process is freshly spawned
+      Light blue: run by the same account that started process explorer
+      Dark blue: selected by user
+      Pink: process is a service
+      Gray: suspended process
+
+
+  Process Monitor
+
+    Configuration guide: https://adamtheautomator.com/procmon/
+
+    Official definition:
+      Process Monitor is an advanced monitoring tool for Windows that shows real-time file system, 
+      Registry and process/thread activity. It combines the features of two legacy Sysinternals 
+      utilities, Filemon and Regmon, and adds an extensive list of enhancements including rich and 
+      non-destructive filtering, comprehensive event properties such as session IDs and user names, 
+      reliable process information, full thread stacks with integrated symbol support for each 
+      operation, simultaneous logging to a file, and much more. Its uniquely powerful features will 
+      make Process Monitor a core utility in your system troubleshooting and malware hunting toolkit.
+
+    Run using: C:\procmon -accepteula
+
+    Learning how to configure filters is required to make this usable
+
+    Additional resources:
+      Processes and threads: https://docs.microsoft.com/en-us/windows/win32/procthread/about-processes-and-threads
+      Windows API calls: https://docs.microsoft.com/en-us/windows/win32/apiindex/windows-api-list
+
+
+  PsExec
+
+    https://docs.microsoft.com/en-us/sysinternals/downloads/psexec
+    https://adamtheautomator.com/psexec-ultimate-guide/
+
+    Official definition:
+      PsExec is a light-weight telnet-replacement that lets you execute processes on other 
+      systems, complete with full interactivity for console applications, without having to 
+      manually install client software. PsExec's most powerful uses include launching interactive 
+      command-prompts on remote systems and remote-enabling tools like IpConfig that otherwise do 
+      not have the ability to show information about remote systems.
+
+    Run using: C:\>psexec -accepteula
+
+    Another program used by malicious actors
+
+
+

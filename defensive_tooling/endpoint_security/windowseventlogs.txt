@@ -1,0 +1,189 @@
+
+____________
+EVENT VIEWER
+
+  Per Wikipedia, "Event logs record events taking place in the execution of a system to provide 
+  an audit trail that can be used to understand the activity of the system and to diagnose problems. 
+  They are essential to understand the activities of complex systems, particularly in applications with 
+  little user interaction (such as server applications)."
+
+  Log files are stored in a proprietary binary format with the file extension .evt or .evtx 
+
+  Log files with .evtx extension located at: C:\Windows\System32\winevt\Logs
+
+  Categories of Windows Logs:
+    System Logs:
+      Records events associated with the Operating System segments. They may include information 
+      about hardware changes, device drivers, system changes, and other activities related to the device.
+    
+    Security Logs: 
+      Records events connected to logon and logoff activities on a device. The system's audit policy 
+      specifies the events. The logs are an excellent source for analysts to investigate attempted or 
+      successful unauthorized activity.
+
+    Application Logs: 
+      Records events related to applications installed on a system. The main pieces of information 
+      include application errors, events, and warnings.
+
+    Directory Service Events: 
+      Active Directory changes and activities are recorded in these logs, mainly on domain controllers.
+
+    File Replication Service Events: 
+      Records events associated with Windows Servers during the sharing of Group Policies and logon 
+      scripts to domain controllers, from where they may be accessed by the users through the client 
+      servers.
+
+    DNS Event Logs: 
+      DNS servers use these logs to record domain events and to map out
+    Custom Logs: 
+      Events are logged by applications that require custom data storage. This allows applications 
+      to control the log size or attach other parameters, such as ACLs, for security purposes.
+
+  Event types:
+    https://docs.microsoft.com/en-us/windows/win32/eventlog/event-types
+    
+    Error
+    Warning
+    Information
+    Success Audit
+    Failure Audit
+
+  C:\>eventvwr.msc
+
+  The Clear Log button in the Log Properties window is the only way to clear a log
+
+  PowerShell logs at Applications and Services Logs > Microsoft > Windows > PowerShell
+
+  Filter using right panel "Create Custom View" or "Filter Current Log"
+
+____________
+WEVTUTIL.EXE
+
+  https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil
+
+  C:\>wevutil.exe (/?)
+  C:\>wevutil.exe [COMMAND] /? 
+
+____________
+GET-WINEVENT
+
+  https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent?view=powershell-5.1
+
+  Microsoft definition:
+    "gets events from event logs and event tracing log files on local and remote computers."
+
+  The Get-WinEvent cmdlet replaces the Get-EventLog cmdlet.
+
+  Tip: If you are ever working on a Windows evaluation virtual machine that is cut off from the 
+  Internet eventually, it will shut down every hour. ;^) 
+
+  Useful Options:
+    -ListLog [STRING[]]
+    -ListProvider [STRING[]]
+    -LogName [STRING[] / *]
+    -ProviderName [STRING[] / *]
+    -Path [STRING[]]
+    -FilterHashtable [STRING[]]
+    -FilterXml [STRING[]]
+
+
+  Filtering:
+    Get-WinEvent [OPTIONS] | Where-Object { $_.[PROPERTY] -Match '[STRING]' }
+
+    Hash Tables:
+      Event viewer can be used to aid in building queries (general tab, Log Name/Source/Event ID/Level)
+
+      Guidelines for defining a hash table are:
+        Begin the hash table with an @ sign.
+        Enclose the hash table in braces {}
+        Enter one or more key-value pairs for the content of the hash table.
+        Use an equal sign (=) to separate each key from its value.
+        Line breaks can be used instead of semicolons
+
+      Syntax: @{ <name> = <value>; [<name> = <value> ] ...}
+      Example: 
+        Get-WinEvent -FilterHashtable @{
+          LogName='Application' 
+          ProviderName='WLMS' 
+        }
+
+_____________
+XPATH QUERIES
+
+  Windows Event Log supports a subset of XPath 1.0: https://www.w3.org/TR/1999/REC-xpath-19991116/
+  https://docs.microsoft.com/en-us/windows/win32/wes/consuming-events#xpath-10-limitations
+  https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms256115(v=vs.100)
+
+  XPath definition:
+    The W3C created XPath, or XML Path Language in full, to provide a standard syntax and 
+    semantics for addressing parts of an XML document and manipulating strings, numbers, and 
+    booleans.
+
+  Windows Event Log XPath queries should start with '*' or 'Event'
+
+  Event Viewer > Details > XML View 
+  Craft queries with format '*/[TAG]/[TAG]/.../[TAG][OPERATOR][VALUE]'
+                        or  '*/[TAG]/[TAG]/.../[TAG][@[PROPERY][OPERATOR][VALUE]]
+  
+  Keyword 'and' can be used to combine queries
+
+  Example queries:
+    // The following query selects all events from the channel or log file where the severity level is less than or equal to 3 and the event occurred in the last 24 hour period. 
+    XPath Query: *[System[(Level <= 3) and TimeCreated[timediff(@SystemTime) <= 86400000]]]
+
+    Get-WinEvent -LogName Application -FilterXPath '*/System/EventID=100'
+
+    Get-WinEvent -LogName Application -FilterXPath '*/System/EventID=101 and */System/Provider[@Name="WLMS"]'
+
+    // EventData query
+    Get-WinEvent -LogName Security -FilterXPath '*/EventData/Data[@Name="TargetUserName"]="System"'
+
+    Get-WinEvent -LogName Application -FilterXPath '*/'
+  
+_________
+EVENT IDS
+
+  https://static1.squarespace.com/static/552092d5e4b0661088167e5c/t/580595db9f745688bc7477f6/1476761074992/Windows+Logging+Cheat+Sheet_ver_Oct_2016.pdf
+  https://web.archive.org/web/20190115215749/https://apps.nsa.gov/iaarchive/customcf/openAttachment.cfm?FilePath=/iad/library/ia-guidance/security-configuration/applications/assets/public/upload/Spotting-the-Adversary-with-Windows-Event-Log-Monitoring.pdf&WpKes=aF6woL7fQp3dJiqyJL2LenrLxuHC7ztGtVNK3x
+  https://attack.mitre.org/
+  https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor
+  "The Windows 10 and Windows Server 2016 Security Auditing and Monitoring Reference" (>700 pages): https://www.microsoft.com/en-us/download/confirmation.aspx?id=52630
+
+  Some events are not generated by default and need to be enabled/configured on the endpoint:
+    Powershell Logging:
+      Local Computer Policy > Computer Configuration > Administrative Templates > Windows Components > Windows PowerShell
+    https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging_windows?view=powershell-7.1
+    https://www.fireeye.com/blog/threat-research/2016/02/greater_visibilityt.html
+    https://docs.splunk.com/Documentation/UBA/5.0.4/GetDataIn/AddPowerShell
+
+    Audit Process Creation (Command-line Process Auditing):
+      https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/manage/component-updates/command-line-process-auditing#try-this-explore-command-line-process-auditing
+      Local Computer Policy > Computer Configuration > Administrative Templates > System > Audit Process Creation
+
+____________________________
+PUTTING THEORY INTO PRACTICE
+
+  Scenario 1 (Questions 1 & 2): 
+    Searched for "MITRE powershell downgrade" on google, then found the Event ID on the technique page.
+    
+    Load file into event viewer, create custom view for Event ID 400, copy timestamp
+
+  Scenario 2 (Questions 3 & 4): 
+    Search "MITRE windows log clear", go to detection section, found ID's 1100, 1102, 1104,
+    104, and 4104. Custom view for 1100, 1102, 1104, and 104. Found log clear event with ID
+    104. Looked at XML details to find EventRecordID and Computer name.
+
+
+  Scenario 3 (Questions 5, 6 & 7): 
+    Creating a filter for ID 4104 in Event Viewer and scrolling to the bottom shows us the
+    first command executed. Going to the XML details finds the rest of the relevant info.
+
+
+  Scenario 4 (Questions 8 & 9): 
+    Using an XPath query to search for the given path 
+    (Data[@Name="CallerProcessName"]="C:\Windows\System32\net1.exe")
+    we can find three event logs. Then making a custom view in Event Viewer using the timestamp
+    and Event ID of these logs, we can take a look at them. We can see one log in particular is
+    enumerating a group rather than an individual account, and we can use that log to answer
+    the questions.
+

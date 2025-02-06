@@ -1,0 +1,193 @@
+_______________
+USEFUL COMMANDS
+
+  tasklist
+  wmic
+  ps
+  Get-Process
+
+_____________
+GENERAL NOTES
+
+  https://tryhackme.com/r/room/btwindowsinternals
+
+  Add the "Image path name" and "Command line" columns to the details tab in task manager.
+
+  System process:
+    PID for System should always be 4
+    Verified in Process Hacker properties
+    Parent process should be "System Idle Process (0)"
+    Only should have one instance
+    Should always run in Session 0
+
+  Windows Session Manager/Session Manager Subsystem (smss.exe):
+    First user-mode process started by kernel
+    Starts kernel and user modes of the Windows subsystem
+    Starts win32k.sys (kernel mode), winsrv.dll (user mode), csrss.exe (user mode)
+    csrss.exe (Windows subsystem) and wininit.exe should be started in Session 0
+    csrss.exe and winlogon.exe in Session 1
+    It will also launch any other subsystem listed in "Required" under HKLM\System\CurrentControlSet\Control\Session Manager\Subsystems
+
+    Expected Values:
+      Image Path:  %SystemRoot%\System32\smss.exe
+      Parent Process:  System
+      Number of Instances:  One master instance and child instance per session. The child instance exits after creating the session.
+      User Account:  Local System
+      Start Time:  Within seconds of boot time for the master instance
+
+    Unexpected behaviors:
+      A different parent process other than System (4)
+      The image path is different from C:\Windows\System32
+      More than one running process. (children self-terminate and exit after each new session)
+      The running User is not the SYSTEM user
+      Unexpected registry entries for Subsystem
+
+  Client Server Runtime Process (csrss.exe):
+    The user-mode side of the Windows subsystem, always running and critical to system operation
+    If terminated, the system will fail/crash
+    Responsible for Win32 console window and process thread creation and deletion
+    Each instance loads csrsrv.dll, basesrv.dll, and winsrv.dll
+    Responsible for making the Windows API available to other processes, mapping drive letters, and shutting down the system
+
+    Expected values:
+      Image Path:  %SystemRoot%\System32\csrss.exe
+      Parent Process:  Created by an instance of smss.exe
+      Number of Instances:  Two or more
+      User Account:  Local System
+      Start Time:  Within seconds of boot time for the first two instances (for Session 0 and 1). 
+        Start times for additional instances occur as new sessions are created, although only 
+        Sessions 0 and 1 are often created.
+
+    Unexpected values:
+      An actual parent process. (smss.exe calls this process and self-terminates)
+      Image file path other than C:\Windows\System32
+      Subtle misspellings to hide rogue processes masquerading as csrss.exe in plain sight
+      The user is not the SYSTEM user.
+
+  Windows Initialization Process (wininit.exe):
+    Responsible for launching services.exe, lsass.exe, lsaiso.exe within Session 0
+    Critical background process
+    lsaiso.exe will only run if Credential Guard/KeyGuard are enabled.
+
+    Usual values:
+      Image Path:  %SystemRoot%\System32\wininit.exe
+      Parent Process:  Created by an instance of smss.exe
+      Number of Instances:  One
+      User Account:  Local System
+      Start Time:  Within seconds of boot time
+
+    Unexpected values:
+      An actual parent process. (smss.exe calls this process and self-terminates)
+      Image file path other than C:\Windows\System32
+      Subtle misspellings to hide rogue processes in plain sight
+      Multiple running instances
+      Not running as SYSTEM
+
+  Service Control Manager/SCM (services.exe):
+    Handles system services, loading services, interacting with services, starting/ending services
+    Maintains a database that can be queried using sc.exe
+    Service info is stored at the registry HKLM\System\CurrentControlSet\Services
+    Loads device drivers marked as auto-start in memory
+    After successful user login, sets HKLM\System\Select\LastKnownGood to the CurrentControlSet
+    Parent process for svchost.exe, spoolsv.exe, msmpeng.exe, dllhost.exe, and more
+
+    Expected values:
+      Image Path:  %SystemRoot%\System32\services.exe
+      Parent Process:  wininit.exe
+      Number of Instances:  One
+      User Account:  Local System
+      Start Time:  Within seconds of boot time
+
+    Unexpected values:
+      A parent process other than wininit.exe
+      Image file path other than C:\Windows\System32
+      Subtle misspellings to hide rogue processes in plain sight
+      Multiple running instances
+      Not running as SYSTEM
+
+  Service Host/Host Process for Windows Services (svchost.exe):
+    Responsible for hosting and managing Windows services
+    Services are implemented as DLL's
+    DLL's to implement are stored using the registry key for the service HKLM\SYSTEM\CurrentControlSet\Services\[SERVICE NAME]\Parameters with the subkey ServiceDLL
+
+    Process Hacker can view services by right clicking the svchost.exe process and looking at the 
+      Services submenu. From there individual services can be investigated using "Go to service"
+      When investigating services, check the Service DLL path and the Binary path. The key identifier
+      should be marked with a "-k" option in the Binary path. 
+
+
+    Expected values:
+      Image Path: %SystemRoot%\System32\svchost.exe
+      Parent Process: services.exe
+      Number of Instances: Many
+      User Account: Varies (SYSTEM, Network Service, Local Service) depending on the svchost.exe instance. 
+        In Windows 10, some instances run as the logged-in user.
+      Start Time: Typically within seconds of boot time. Other instances of svchost.exe can be started after boot.
+
+    Unexpected values:
+      A parent process other than services.exe
+      Image file path other than C:\Windows\System32
+      Subtle misspellings to hide rogue processes in plain sight
+      The absence of the -k parameter
+
+  Local Security Authority Subsystem Service (lsass.exe):
+    Responsible for enforcing security policy on the system
+    Verifies users logging in, handles pw changes, creates access tokens, writes to Windows Security Log
+    Creates security tokens for Security Account Manager, Active Directory, and NETLOGON
+    Uses authentication packages stored in HKLM\System\CurrentControlSet\Control\Lsa
+
+    Expected values:
+      Image Path:  %SystemRoot%\System32\lsass.exe
+      Parent Process:  wininit.exe
+      Number of Instances:  One
+      User Account:  Local System
+      Start Time:  Within seconds of boot time
+
+    Unexpected values:
+      A parent process other than wininit.exe
+      Image file path other than C:\Windows\System32
+      Subtle misspellings to hide rogue processes in plain sight
+      Multiple running instances
+      Not running as SYSTEM
+
+  Windows Logon (winlogon.exe):
+    Handles the Secure Attention Sequence (SAS) - ctrl+alt+delete
+    Responsible for loading the user profile
+    It loads the profile by loading the user's NTUSER.DAT into HKCU and userinit.exe into the user's shell
+    Also responsible for locking the screen and running the screensaver
+    Run by smss.exe in Session 1
+
+    Expected values:
+      Image Path:  %SystemRoot%\System32\winlogon.exe
+      Parent Process:  Created by an instance of smss.exe that exits, so analysis tools usually do not provide the parent process name.
+      Number of Instances:  One or more
+      User Account:  Local System
+      Start Time:  Within seconds of boot time for the first instance (for Session 1). Additional instances occur as new sessions are created, typically through Remote Desktop or Fast User Switching logons.
+    
+    Unusual values:
+      An actual parent process. (smss.exe calls this process and self-terminates)
+      Image file path other than C:\Windows\System32
+      Subtle misspellings to hide rogue processes in plain sight
+      Not running as SYSTEM
+      Shell value in the registry other than explorer.exe
+
+  Windows Explorer (explorer.exe):
+    Gives user access to their folders and files
+    Provides functionality for start menu and taskbar
+    winlogon.exe runs userinit.exe which spawns explorer.exe and exits
+    explorer.exe will likely have many child processes
+
+    Expected values:
+      Image Path:  %SystemRoot%\explorer.exe
+      Parent Process:  Created by userinit.exe and exits
+      Number of Instances:  One or more per interactively logged-in user
+      User Account:  Logged-in user(s)
+      Start Time:  First instance when the first interactive user logon session begins
+
+    Unexpected values:
+      An actual parent process. (userinit.exe calls this process and exits)
+      Image file path other than C:\Windows
+      Running as an unknown user
+      Subtle misspellings to hide rogue processes in plain sight
+      Outbound TCP/IP connections
+

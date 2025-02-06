@@ -39,6 +39,8 @@ USEFUL COMMANDS
     Select-Object [PROPERTY](,[PROPERTY],...)
   equivalent to SQL WHERE clause:
     Where-Object -Property [PROPERTY] [OPERATOR] [VARIABLE]
+  count lines:
+    ([COMMAND] | Measure-Object -line).Lines
 
   Get-Help Invoke-Command (-examples)
 
