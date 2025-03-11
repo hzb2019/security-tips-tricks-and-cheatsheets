@@ -1,0 +1,55 @@
+
+  THM Definition:
+    Created in 2015, Wazuh is an open-source, freely available and extensive EDR solution. 
+    It can be used in all scales of environments. Wazuh operates on a management and agent 
+    module. Simply, a device is dedicated to running Wazuh named a manager, where Wazuh 
+    operates on a management and agent model where the manager is responsible for managing 
+    agents installed on the devices you’d like to monitor.
+
+
+  For Wazuh to properly populate, agents need to be installed on devices for logging events.
+  This requires a Wazuh server to be set up. With a server set up, deployed agents can be 
+  directed to send their collected information back to the Wazuh server. They also can set
+  group configurations to organize sets of agents.
+
+  The Vulnerability Assessment module will automatically scan the OS for installed programs
+  and ensure they are up-to-date and are not vulnerable to major CVE's. This module will 
+  run once on installation and must be configured to continue running at regular intervals.
+  (Use the server config file /var/ossec/etc/ossec.conf to modify scan interval)
+
+  Collecting Windows logs:
+    To collect Windows logs, Sysmon first needs to be started (and preferably configured to
+    detect interesting logs). We can do that with 'Sysmon64.exe -accepteula -i [CONFIGFILE]'
+    Sysmon starting can be verified in Event Viewer by navigating to 'Application and 
+    Services Logs > Microsoft > Sysmon > Operational' and verifying the existence of a 
+    'Event ID 16/Sysmon config state changed' event. With the configs set, testing 
+    the configuration is set properly is a good idea. 
+
+    Next, these event logs need to be hooked into Wazuh and sent back to the server. To
+    do this, navigate to the Wazuh agent file 
+    (C:\Program Files (x86)\ossec-agent\ossec.conf) and add the snippet 
+      <localfile>
+        <location>Microsoft-Windows-Sysmon/Operational</location>
+        <log_format>eventchannel</log_format>
+      </localfile>
+    (<location> should contain whatever directory the events are logged at)
+
+    To ensure the changes are implemented properly, the Wazuh agent OS should be
+    restarted. Once this is completed, the Wazuh Management server needs to be 
+    configured to handle the new Sysmon log files. This can be implemented through
+    an XML rules file ie. /var/ossec/etc/rules/local_rules.xml
+      <group name="sysmon,">
+        <rule id="255000" level="12">
+          <if_group>sysmon_event1</if_group>
+          <field name="sysmon.image">\\powershell.exe||\\.ps1||\\.ps2</field>
+          <description>Sysmon - Event 1: Bad exe: $(sysmon.image)</description>
+          <group>sysmon_event1,powershell_execution,</group>
+        </rule>
+      </group>
+
+    Finally, when the management server is restarted, the Sysmon events should now 
+    be available for viewing in the Wazuh Management server.
+
+  Collecting Linux logs:
+    
+
