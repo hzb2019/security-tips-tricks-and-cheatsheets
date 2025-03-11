@@ -51,5 +51,45 @@
     be available for viewing in the Wazuh Management server.
 
   Collecting Linux logs:
-    
+    Wazuh agents in Linux depend on the auditd package for Debian, Ubuntu, and CentOS. 
+    Installing and configuring auditd to run on startup:
+      sudo apt-get install auditd audispd-plugins
+      sudo systemctl enable auditd.service && sudo systemctl start auditd.service 
 
+    auditd rules stored in: /etc/audit/rules.d/audit.rules
+    auditd rule for logging all commands run as root: 
+      -a exit,always -F arch=64 -F euid=0 -S execve -k audit-wazuh-c
+    
+    reload rules file on running audits:
+      sudo auditctl -R /etc/audit/rules.d/audit.rules
+
+    Wazuh config path: /var/ossec/etc/ossec.conf
+    config for Wazuh to read auditd log file:
+      <localfile>
+        <location>/var/log/audit/audit.log</location>
+        <log_format>audit</log_format>
+      </localfile>
+
+  Wazuh API:
+    Save auth token as an environment variable:
+      TOKEN=$(curl -u : -k -X GET "https://[WAZUH_MANAGEMENT_SERVER_IP]:55000/security/user/authenticate?raw=true")
+
+    Check for successful auth using TOKEN environment variable:
+      curl -k -X GET "https://[MACHINE_IP]:55000/" -H "Authorization: Bearer $TOKEN"
+
+    Pretty print status reponse:
+      curl -k -X GET "https://MACHINE_IP:55000/manager/status?pretty=true" -H "Authorization: Bearer $TOKEN"
+
+    List stats, monitored services, and some general server settings:
+      curl -k -X GET "https://MACHINE_IP:55000/manager/configuration?pretty=true§ion=global" -H "Authorization: Bearer $TOKEN"
+
+    Use management server API to interact with an agent:
+      curl -k -X GET "https://MACHINE_IP:55000/agents?pretty=true&offset=1&limit=2&select=status%2Cid%2Cmanager%2Cname%2Cnode_name%2Cversion&status=active" -H "Authorization: Bearer $TOKEN"
+
+    API console accessible through the management panel site -> dropdown menu -> Tools -> API Console
+
+  Reports:
+    Dropdown menu -> Modules -> Security Events -> Select timeframe -> Generate Report
+    Dropdown menu -> Management -> Reporting
+
+  
