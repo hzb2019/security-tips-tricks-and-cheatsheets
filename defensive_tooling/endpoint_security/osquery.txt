@@ -1,0 +1,91 @@
+
+  https://osquery.io/
+  https://github.com/osquery/osquery
+  https://engineering.fb.com/2014/10/29/security/introducing-osquery/
+
+  Schema documentation: https://osquery.io/schema/5.5.1/
+
+  THM Description:
+    Osquery is an open-source agent created by Facebook in 2014. It converts the operating system 
+    into a relational database. It allows us to ask questions from the tables using SQL queries, 
+    like returning the list of running processes, a user account created on the host, and the process 
+    of communicating with certain suspicious domains. It is widely used by Security Analysts, Incident 
+    Responders, Threat Hunters, etc. Osquery can be installed on multiple platforms: Windows, Linux, 
+    macOS, and FreeBSD.
+
+________________
+INTERACTIVE MODE
+
+  invoke with "osqueryi"
+
+  COMMANDS:
+    .help
+    .tables ([STRING])  ((lists tables (only containing [STRING])))
+    .schema [TABLE_NAME]
+    .mode [MODE] ((set output mode, look at .help for modes))
+    
+  SQL examples:
+    select [COLUMN] ([COLUMN] [COLUMN]) from [TABLE];
+    select * FROM programs LIMIT 1;
+    SELECT name, version, install_location, install_date from programs limit 1;
+    SELECT count(*) from programs;
+    SELECT * FROM users WHERE username='James';
+    select p.pid, p.name, p.path, u.username from processes p JOIN users u on u.uid=p.uid LIMIT 10;
+
+    Operators:
+      = [equal]
+      <>  [not equal]
+      >, >= [greater than, greater than, or equal to]
+      <, <= [less than or less than or equal to] 
+      BETWEEN [between a range]
+      LIKE [pattern wildcard searches]
+      % [wildcard, multiple characters]
+      _ [wildcard, one character]
+
+    Wildcards:
+      %: Match all files and folders for one level.
+      %%: Match all files and folders recursively.
+      %abc: Match all within-level ending in "abc".
+      abc%: Match all within-level starting with "abc".
+
+      /Users/%/Library: Monitor for changes to every user's Library folder, but not the contents within.
+      /Users/%/Library/: Monitor for changes to files within each Library folder, but not the contents of their subdirectories.
+      /Users/%/Library/%: Same, changes to files within each Library folder.
+      /Users/%/Library/%%: Monitor changes recursively within each Library.
+      /bin/%sh: Monitor the bin directory for changes ending in sh.
+
+    JOINs:
+      Query1: select uid, pid, name, path from processes;
+      Query2: select uid, username, description from users;
+      Joined Query: select p.pid, p.name, p.path, u.username from processes p JOIN users u on u.uid=p.uid LIMIT 10;
+
+_________
+CHALLENGE
+
+  Which table stores the evidence of process execution in Windows OS?
+    This information should be available at the schema documentation link at the beginning
+    of this documents. Doing a ctrl+f for "execution" will eventually find the relevant table.
+
+  One of the users seems to have executed a program to remove traces from the disk; 
+  what is the name of that program?
+    Using the table found in the previous question, we can run an SQL query against it and
+    look for any suspicious executables that might indicate removing data from the disk.
+    Looks like there's one in the path C:\Users\James\Documents.
+
+  Create a search query to identify the VPN installed on this host. What is name of the software?
+    Using '.schema programs' we can craft a specific query using wildcards to find installed 
+    programs with 'VPN' in the name. It might look something like:
+      select * from programs where name LIKE '%VPN%';
+    This query finds us the information we are looking for.
+
+  How many services are running on this host?
+    Use the count(*) function on table 'services'.
+
+  A table autoexec contains the list of executables that are automatically executed on the target 
+  machine. There seems to be a batch file that runs automatically. What is the name of that batch 
+  file (with the extension .bat)?
+    First use .schema to find how the table is formatted, then use wildcard to find matching file 
+    names or paths. I chose to try to match by file name (name LIKE '%.bat').
+
+  
+  
