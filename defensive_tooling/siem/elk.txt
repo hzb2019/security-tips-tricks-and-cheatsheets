@@ -1,0 +1,55 @@
+
+ELK:
+  Elasticsearch
+    Full-text search and analytics engine used to store JSON documents. Important for data storage,
+    analytics, correlations, etc. Supports RESTful API for interacting with data.
+  Logstash
+    Data processing engine - takes data, filters or normalizes it, then sends it to a destination
+    (usually Kibana or a listening port). 
+    Supports various plugins for inputs, filters, and outputs:
+      https://www.elastic.co/guide/en/logstash/8.1/input-plugins.html
+      https://www.elastic.co/guide/en/logstash/8.1/filter-plugins.html
+      https://www.elastic.co/guide/en/logstash/8.1/output-plugins.html
+    Config files are formatted like so:
+      Input {
+
+      }
+      Filter {
+
+      }
+      Output {
+
+      }
+  (Beats)
+    Host-based agent (known as Data-shippers) used to transfer data from endpoints to 
+    elasticsearch. Each beat is a single-purpose agent that sends specific data to elasticsearch.
+    Types of beats include:
+      Filebeat, Metricbeat, Packetbeat (network data), Winlogbeat (Windows event logs), Auditbeat,
+      Heartbeat (uptime monitoring), Functionbeat (Serverless shipper for cloud data)
+  Kibana
+    Web-based data visualization tool used with elasticsearch to analyze, investigate, and visualize
+    data streams in real-time.
+  
+  Beats -> Logstash -> Elasticsearch <-> Kibana
+
+______
+KIBANA
+
+  Kibana supports both Kibana Query Language (KQL) and Lucene Query Language (LQL).
+  
+  The free-text search will search for exact matches for a given text input in all available 
+  text fields. Asterisk wildcard can be used for string queries. Logical AND/OR/NOT can be used
+  to combine search terms.
+
+  Field based search can be used with FIELD:VALUE syntax.
+
+  Data visualizations for a field can be created by selecting the column of interest on
+  the left panel and selecting "visualize" at the bottom of the menu. When making visualizations,
+  make sure to select an appropriate chart type for the information, and give it the appropriate
+  fields to slice by/break down by/etc.
+
+
+All VPN logs are being ingested into the index vpn_connections.
+The index contains the VPN logs for January 2022.
+A user Johny Brown was terminated on 1st January 2022.
+We observed failed connection attempts against some users that need to be investigated.
