@@ -1,0 +1,34 @@
+
+  First, start the AttackBox and VM, connect to the VM in the AttackBox and login to ELK.
+  Navigate to the Discover tab to and make sure the Index Pattern is set to "connection_logs".
+
+  Questions/Solutions:
+    How many events were returned for the month of March 2022?
+      Set the date range in the top right of the dashboard.
+
+    What is the IP associated with the suspected user in the logs?
+      When looking through the left panel with available fields, we can check the "user_agent"
+      field to see a suspicious value. We can then see the single value for the "source_ip" 
+      field given filtering for this suspicious value.
+
+    The user’s machine used a legit windows binary to download a file from the C2 server. 
+    What is the name of the binary?
+      The unusual "user_agent" field value.
+
+    The infected machine connected with a famous filesharing site in this period, which also 
+    acts as a C2 server used by the malware authors to communicate. What is the name of the 
+    filesharing site?
+      Found in the "host" field when filtering for the suspicious "user_agent".
+
+    What is the full URL of the C2 to which the infected host is connected?
+      Combine the "host" field with the "uri" field.
+
+    A file was accessed on the filesharing site. What is the name of the file accessed?
+      Go to the URL from the above question.
+
+    The file contains a secret code with the format THM{_____}.
+      Go to the URL from the above question.
+
+
+
+
