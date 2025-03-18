@@ -42,3 +42,46 @@ SPLUNK 201
   Checking for reconnaisance activity:
     Look for IP addresses with heavy activity. When these are located, check things 
     like user agents, POST requests, URI's for suspicious activity. 
+
+  Checking for exploitation activity:
+    Search for requests by IP count using the given search query:
+      index=botsv1 imreallynotbatman.com sourcetype=stream* | stats count(src_ip) as Requests by src_ip | sort - Requests
+    
+    Useful information can be found by searching for traffic for a specific destination IP, then
+    checking from what source IP addresses traffic is coming from.
+    
+    Analyzing HTTP traffic:
+      Try checking and filtering by HTTP method.
+
+      Check interesting fields like "src_ip", "form_data", "http_user_agent", and "uri"
+
+      Use the following query for a convenient table with useful info (make sure to filter for
+      POST requests):
+          |  table _time uri src_ip dest_ip form_data
+
+      Extract password credentials with the following query:
+        index=botsv1 sourcetype=stream:http dest_ip="192.168.250.70" http_method=POST form_data=*username*passwd* 
+        | rex field=form_data "passwd=(?<creds>\w+)"  
+        | table src_ip creds
+
+
+
+
+______
+TABLES
+
+  To create a table, use the keyword "table" and follow it with the intended columns
+
+  Examples:
+    table _time uri src_ip dest_ip form_data
+
+_____
+REGEX
+
+  To use regex, use the keyword "rex", type the field=[FIELD] to search in, then add a regex 
+  in quotes. Extractions can be performed using (?<EXTRACTION>) which can then be accessed
+  subsequently in the query.
+
+  Examples:
+    rex field=Local ".*:(?<port>.*)"
+    rex field=form_data "passwd=(?<creds>\w+)" | table src_ip creds
