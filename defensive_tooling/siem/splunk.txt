@@ -1,0 +1,14 @@
+
+  Splunk is one of the leading SIEM solutions in the market that provides the ability to collect,
+  analyze and correlate network and machine logs in real-time.
+
+  Splunk has three main components:
+    Forwarder:
+      Installed on the endpoint to be monitored, forwarder collects data and sends it back
+      to the Splunk instance. Minimally impacts endpoint performance.
+    Indexer:
+      Processes data received from Forwarders into key:value pairs and determines data types.
+    Search Head:
+      Where users can search the indexed data using terms or Splunk Search Processing Language.
+
+  
