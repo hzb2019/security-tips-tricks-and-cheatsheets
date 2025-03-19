@@ -8,3 +8,7 @@ https://abuse.ch/
   https://threatfox.abuse.ch/ ((indicators of compromise))
 https://talosintelligence.com/
 https://www.virustotal.com/
+https://www.robtex.com/
+https://otx.alienvault.com
+https://www.threatminer.org/
+https://www.hybrid-analysis.com/

@@ -39,11 +39,11 @@ SPLUNK 201
   Before searching, make sure the timeframe is correct, and 
   the search mode is set to the intended value.
 
-  Checking for reconnaisance activity:
+  Checking for reconnaisance phase activity:
     Look for IP addresses with heavy activity. When these are located, check things 
     like user agents, POST requests, URI's for suspicious activity. 
 
-  Checking for exploitation activity:
+  Checking for exploitation phase activity:
     Search for requests by IP count using the given search query:
       index=botsv1 imreallynotbatman.com sourcetype=stream* | stats count(src_ip) as Requests by src_ip | sort - Requests
     
@@ -64,7 +64,78 @@ SPLUNK 201
         | rex field=form_data "passwd=(?<creds>\w+)"  
         | table src_ip creds
 
+  Checking for installation phase activity:
+    Search for executables uploaded over HTTP:
+      index=botsv1 sourcetype=stream:http dest_ip="192.168.250.70" *.exe
+    Check the part_filename{} extracted field for the names of files found.
 
+    To see if this file was executed, we can filter for the filename we are checking for
+    executions of, then check what values exist for the "sourcetype" field. Seeing the file
+    showing up in things like Sysmon is important for determining the extent of what it had done.
+
+    Using our knowledge of Sysmon, we can use the "EventCode" field to filter for Event ID 1
+    Sysmon logs for process creation events:
+      index=botsv1 "3791.exe" sourcetype="XmlWinEventLog" EventCode=1
+
+    Checking the "CommandLine" field we can filter the logs further to only be related to 
+    values where the executable we are interested in is being run.
+
+  Investigating actions on objectives:
+    For this phase, looking through Suricata logs will be where we start. In particular,
+    checking events where traffic is directed towards the server that was defaced will be 
+    valuable. 
+
+    We see heavy traffic from external sources (for some reason the writeup doesn't match
+    this). If there was not inbound traffic from external sources, we could investigate
+    the traffic between this server and the other internal addresses, or as the writeup
+    chooses to do - change the direction of things and check for outbound traffic. 
+      NOTE: it didn't match it because I was filtering by "dest_ip" rather than just "dest". 
+      not sure what the difference is.
+      NOTE 2: turns out when you check for outbound traffic you don't want to look for "dest"
+      anymore now you do in fact want to look at "dest_ip" lol
+      NOTE 3: as explained later in the problem, the "src" field actually indicates who
+      initiates the connection to the given "dest" address. using "src_ip" and "dest_ip"
+      technically still work, but it seems the nuance is that "src" indicates who initiated
+      the TCP handshake or w/e, so seeing initiations come from the server side is unusual.
+
+    When investigating the traffic on the destination addresses, we can look at things like
+    the URL's being accessed to check for suspicious activity. A file appears to have been 
+    uploaded/accessed, we can investigate where it came from using the following query:
+      index=botsv1 url="/poisonivy-is-coming-for-you-batman.jpeg" dest_ip="192.168.250.70" 
+      | table _time src dest_ip http.hostname url
+
+    For the last problem, we can filter for sourcetype=fortigate_utm and src=40.80.148.42.
+    From there, we can check the "signature" field and pull the one that includes the term
+    "SQL" to find the answer we are looking for.
+
+  Investigating C2:
+    "The attacker uploaded the file to the server before defacing it. While doing so, 
+    the attacker used a Dynamic DNS to resolve a malicious IP. Our objective would be to find 
+    the IP that the attacker decided the DNS."
+    I have no idea how one would determine this, I assume this is just provided as context.
+
+    The problem recommends continuing to look through the firewall logs, and specifically
+    searching for the name of the file that was uploaded:
+      index=botsv1 sourcetype=fortigate_utm"poisonivy-is-coming-for-you-batman.jpeg"
+
+    Very conveniently, there is only one URL associated with this traffic, and we can reasonably
+    assume this is the C2 server. To be extra safe, we can correlate this with other log sources.
+    Here we are checking the HTTP stream logs for the file between our server and the C2 server:
+      index=botsv1 sourcetype=stream:http dest_ip=23.22.63.114 "poisonivy-is-coming-for-you-batman.jpeg" src_ip=192.168.250.70
+    We can also check the DNS logs:
+      index=botsv1 sourcetype=stream:dns "prankglassinebracket.jumpingcrab.com"
+    We can see the DNS queries made to 8.8.8.8 for this URL. We can see in the logs responses
+    to "name:prankglassinebracket.jumpingcrab.com" with "host_addr:23.22.63.114". If we wanted,
+    we could investigate individual queries using the "transaction_id" field.
+
+  Investigating weaponization and delivery involve using threat intel tools to further
+  check the IP addresses and files that were detected to determine extent of damage and 
+  ensure everything is properly cleaned up. Hybrid analysis (hybrid-analysis.com) has 
+  useful insights into malware behavior and details found there can be used to check logs
+  for further detections of malware that may be remaining. 
+
+
+    
 
 
 ______
