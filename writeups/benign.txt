@@ -1,0 +1,51 @@
+The network is divided into three logical segments. It will help in the investigation.
+
+IT Department
+  James
+  Moin
+  Katrina
+
+HR department
+  Haroon
+  Chris
+  Diana
+
+Marketing department
+  Bell
+  Amelia
+  Deepak
+
+Prep Splunk: open search from left sidebar, prep time and set search to verbose.
+
+  Question: How many logs are ingested from the month of March, 2022?
+Use the search date range configuration on the search bar and make a search for "index=*".
+
+  Question: Imposter Alert: There seems to be an imposter account observed in the logs, 
+  what is the name of that user?
+With a search configured, go click on the "UserName" field and do a search for rare values.
+
+  Question: Which user from the HR department was observed to be running scheduled tasks?
+Windows tasks are scheduled using "schtasks.exe" so we can do a search for this string. 
+With the search results, we can check the "UserName" field for users that are in the HR dept.
+
+  Question: Which user from the HR department executed a system process (LOLBIN) to 
+  download a payload from a file-sharing host.
+Search for the string "http*" to check for unobfuscated web traffic. 
+
+  Question: To bypass the security controls, which system process (lolbin) was used 
+  to download a payload from the internet?
+Found in previous log (the executable that was run).
+
+  Question: What was the date that this binary was executed by the infected host?
+Found in previous log (timestamp in "EventTime" field).
+
+  Question: What is the name of the file that was saved on the host machine from the 
+  C2 server during the post-exploitation phase?
+Found in previous log (name of file that was downloaded).
+
+  Question: The suspicious file downloaded from the C2 server contained malicious 
+  content with the pattern THM{..........}; what is that pattern?
+Check the suspicious URL in virustotal. Details -> Meta Tags.
+
+  Question: What is the URL that the infected host connected to?
+Found in 2nd previous log (full URL).
