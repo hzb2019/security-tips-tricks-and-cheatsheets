@@ -1,0 +1,70 @@
+
+Go to the splunk address, then once it's loaded navigate to the search panel using the 
+first button on the left side panel. Once at the search panel, we should go configure our 
+search parameters so we make sure we're seeing all the information available to us. We 
+can set the timeframe to "All Time" because we weren't given a specific timeframe to search 
+in, and under the timeframe we can select the dropdown menu and switch "Smart Mode" to 
+"Verbose Mode" so we can easily access all available fields. Once we've configured our 
+search to show all useful information, we can take a quick look at the search history
+and see if there's anything interesting there we can use to jumpstart our investigation.
+
+  Question: How many events were collected and Ingested in the index main?
+Looking through the search history it looks like there's already a query for "index=main" 
+that we can use for the answer to this.
+
+
+In the search history it looks like there's another query for "index=*". Just to take a look 
+around, I went and executed this query to see if there were any other index values that might
+contain interesting information. When checking the "index" field for this query, it looks like
+"main" is the only index that exists. When doing another query for "source=*", it seems like 
+the same amount of events are received, so the "index" query doesn't seem to actually do a whole
+lot and can be omitted in future queries. 
+
+  Question: On one of the infected hosts, the adversary was successful in creating a 
+  backdoor user. What is the new username?
+Because we have Sysmon logs, we can try to leverage them to find information related to 
+user creation. After trying to search for a specific EventID for this, it seems like there
+is no "User Creation" EventID, but we can try to use "Process Creation" Events with ID 1 
+to see if there are any processes that tried to create a user. When we filter for "EventID=1"
+we can then check the "CommandLine" field for suspicious commands executed, and there we 
+find something.
+
+  Question: On the same host, a registry key was also updated regarding the new backdoor user. 
+  What is the full path of that registry key?
+With a search for "host=*" we can see that there only seems to be one host involved in this
+source anyways, so we don't need to worry about narrowing our search to stick with the same 
+host. Again we can use Sysmon logs to help us here. To do so, we can filter specifically 
+for Sysmon logs using the "Channel" field, then add "Category=Registry*" for logs related 
+to registry events. Then we further want to narrow for the backdoor user so we can add their 
+name to the query, and it gives us 3 events. Looking at the TargetObject field of these events,
+we can see registry keys that seem to be related to this user.
+
+  Question: Examine the logs and identify the user that the adversary was trying to impersonate.
+Search for "source=*" then look at the "User" field for the answer.
+
+  Question: What is the command used to add a backdoor user from a remote computer?
+We can go back to the query we used in the backdoor user creation question and use the 
+full value in the "CommandLine" field as the answer for this.
+
+  Question: How many times was the login attempt from the backdoor user observed during 
+  the investigation?
+For this we can filter for events from the Windows Security Auditing log. When we search 
+for the suspicious username, we see 5 events. We can read through the event details for logins
+for the login count.
+
+  Question: What is the name of the infected host on which suspicious Powershell 
+  commands were executed?
+We can filter for PowerShell logs by setting up a "Channel" filter to 
+"...PowerShell/Operational". With this, we can see unusual PowerShell activity immediately
+and the hostname associated with its execution.
+
+  Question: PowerShell logging is enabled on this device. How many events were logged for 
+  the malicious PowerShell execution?
+With our previous search, the event count is the answer for this.
+
+  Question: An encoded Powershell script from the infected host initiated a web request. 
+  What is the full URL?
+We can take the command and put the encrypted part through CyberChef to get usable output.
+Using "From Base64" and "Remove null bytes" gets a human readable output. From here, another
+encoded string needs to be decoded and the URI needs to be included. Don't forget to defang 
+the result.
