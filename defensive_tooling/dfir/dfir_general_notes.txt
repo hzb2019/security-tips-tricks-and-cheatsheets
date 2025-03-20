@@ -1,0 +1,23 @@
+
+Because any digital forensics/analysis contaminates evidence, when an incident occurs, evidence
+needs to be collected, then copied and write-protected copies need to be used for analysis.
+Likewise, write-protected evidence needs to have a clear chain of custody to ensure integrity.
+
+NIST Incident Handling Guide: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf
+  Steps:
+  1.  Preparation
+  2.  Detection and Analysis
+  3.  Containment, Eradication, and Recovery
+  4.  Post-incident Activity
+SANS Incident Hander's Handbook: https://www.sans.org/white-papers/33901/
+  Steps:
+  1.  Preparation
+  2.  Identification
+  3.  Containment
+  4.  Eradication
+  5.  Recovery
+  6.  Lessons Learned
+
+
+
+  
