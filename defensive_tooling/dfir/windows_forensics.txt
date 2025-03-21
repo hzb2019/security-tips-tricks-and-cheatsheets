@@ -1,0 +1,69 @@
+
+________
+REGISTRY
+
+  "The Windows Registry is a collection of databases that contains the 
+  system's configuration data."
+
+  Registry entries are separated into "hives":
+  https://docs.microsoft.com/en-us/windows/win32/sysinfo/registry-hives#:~:text=Registry%20Hives.%20A%20hive%20is%20a%20logical%20group,with%20a%20separate%20file%20for%20the%20user%20profile.
+
+  There are five root keys on every Windows System:
+    HKEY_CURRENT_USER (HKCU, contains user folders, screen colors, control panel settings)
+    HKEY_USERS (HCU, HKCU is a subkey of this, contains all actively loaded user info)
+    HKEY_LOCAL_MACHINE (HKLM, contains config info pertaining to the computer)
+    HKEY_CLASSES_ROOT (HKCR, helps open the correct files through windows explorer)
+      This is a subkey of HKLM\Software.
+      Starting in Windows 2000, it started being stored under both HKLM and HKCU keys.
+      HKLM keys apply to everybody on the system, HKCU keys override those for user-specific
+      preferences. 
+      HKCR merges the information from HKLM and HKCU, and even merges them for softwares in
+      earlier versions of Windows. To change settings for the interactive user, changes must
+      be made to HKCU\Software\Classes instead of under HKCR. To change default settings, 
+      change HKLM\Software\Classes (writing to HKCR will write here too).
+
+      If you write a value to HKCR and the key already exists in HKCU\Software\Classes, it will
+      try to then write it to HKLM\Software\Classes.
+    HKEY_CURRENT_CONFIG ()
+    https://docs.microsoft.com/en-US/troubleshoot/windows-server/performance/windows-registry-advanced-users
+
+  Key details and locations:
+    Live registry keys can be viewed when running regedit.exe, or can be read from a disk image 
+    at C:\Windows\System32\Config. This will contain most hives and include:
+      DEFAULT (HCU\DEFAULT)
+      SAM (HKLM\SAM)
+      SECURITY (HKLM\Security)
+      SOFTWARE (HKLM\Software)
+      SYSTEM (HKLM\System)
+    If user-specific information is needed:
+      NTUSER.DAT (mounts to HKCU when logged in, found at C:\Users\[USERNAME]\)
+      USRCLASS.DAT (HKCU\Software\CLASSES when logged in, found at C:\Users\[USERNAME]\AppData\Local\Microsoft\Windows)
+    Amcache hive for recently run programs:
+      C:\Windows\AppCompat\Programs\Amcache.hve
+
+  Logs and Backups:
+    Transaction logs (saved as .LOG, .LOG1, .LOG2 ...) contains changelogs for registry keys and 
+    are saved in the same directory as the hives they track. Sometimes can contain changes that 
+    still need to be implemented to the keys.
+
+    Registry backups contain copies of the registry keys saved in System32\Config and are
+    saved every 10 days to System32\Config\RegBack.
+
+  Tools for collecting Registry information:
+    KAPE: https://www.kroll.com/en/services/cyber-risk/incident-response-litigation-support/kroll-artifact-parser-extractor-kape
+    Autopsy: https://www.autopsy.com/
+    FTK Imager: https://www.exterro.com/ftk-imager 
+      "Another way you can extract Registry files from FTK Imager is through the Obtain 
+      Protected Files option. This option is only available for live systems and is highlighted 
+      in the screenshot below. This option allows you to extract all the registry hives to a 
+      location of your choosing. However, it will not copy the Amcache.hve file, which is often 
+      necessary to investigate evidence of programs that were last executed.
+
+  Tools for browsing collected Registry information:
+    Registry Viewer: https://accessdata.com/product-download/registry-viewer-2-0-0
+      Only loads one hive at a time, cannot take into account transaction logs.
+    Zimmerman's Registry Explorer: https://ericzimmerman.github.io/#!index.md
+    RegRipper: https://github.com/keydet89/RegRipper3.0
+      Takes in a hive and processes forensically interesting keys into a text file.
+      Also does not take into account transaction logs.
+
