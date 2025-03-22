@@ -1,6 +1,6 @@
 
-________
-REGISTRY
+_____________________
+GENERAL REGISTRY INFO
 
   "The Windows Registry is a collection of databases that contains the 
   system's configuration data."
@@ -67,3 +67,77 @@ REGISTRY
       Takes in a hive and processes forensically interesting keys into a text file.
       Also does not take into account transaction logs.
 
+__________________________
+INVESTIGATING THE REGISTRY
+
+  System Information:
+    OS Version: SOFTWARE\Microsoft\Windows NT\CurrentVersion
+    Control Sets (Hives containing startup configurations):
+      SYSTEM\ControlSet001 (Configuration loaded at boot)
+      SYSTEM\ControlSet002 (Last known good configuration)
+      HKLM\SYSTEM\CurrentControlSet (Live dynamic configuration)
+      SYSTEM\Select\Current (Control set being used as CurrentControlSet)
+      SYSTEM\Select\LastKnownGood (Another way to find last known good config)
+    Computer Name: SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName  
+    Time Zone: SYSTEM\CurrentControlSet\Control\TimeZoneInformation
+    Network Interfaces and Past Network Connections:  
+      SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces
+      SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\Unmanaged
+      SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\Managed
+    Autoruns:
+      NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Run
+      NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\RunOnce
+      SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
+      SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\Run
+      SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+    Services:
+      SYSTEM\CurrentControlSet\Services (If "start" key is set to 0x02, it starts at boot)
+    SAM Hive (User accounts, logins, group info):
+      SAM\Domains\Account\Users
+  
+  Files and folders:
+    Recently opened files:
+      NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs
+                                                                              \.[EXTENSION]
+    Recently opened Office files:
+      Version numbers: https://docs.microsoft.com/en-us/deployoffice/install-different-office-visio-and-project-versions-on-the-same-computer#office-releases-and-their-version-number
+      NTUSER.DAT\Software\Microsoft\Office\[VERSION]\[PROGRAM]
+      Office 365 Ties location to Live ID: https://www.microsoft.com/security/blog/2008/05/07/what-is-a-windows-live-id/
+      NTUSER.DAT\Software\Microsoft\Office\[VERSION]\[UserMRU]\[LiveID_####]\[FileMRU]
+    ShellBags (user file explorer preferences):
+      USRCLASS.DAT\Local Settings\Software\Microsoft\Windows\Shell\Bags
+      USRCLASS.DAT\Local Settings\Software\Microsoft\Windows\Shell\BagMRU
+      NTUSER.DAT\Software\Microsoft\Windows\Shell\BagMRU
+      NTUSER.DAT\Software\Microsoft\Windows\Shell\Bags
+      Can use Eric Zimmerman's ShellBag Explorer tool to browse
+    Open/Save and LastVisited Dialog MRU's:
+      NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSavePIDlMRU
+      NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU
+    Windows Explorer Address/Search Bars:
+      NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths
+      NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery
+
+  Evidence of Execution:
+    User Assist (programs launched, time of launch, number of executions - does not incl cmd/PS):
+      NTUSER.DAT\Software\Microsoft\Windows\Currentversion\Explorer\UserAssist\[USER GUID]\Count
+    ShimCache/AppCompatCache (ensures backwards compatibility of applications):
+      SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache
+      Requires Eric Zimmerman's AppCompatCache Parser tool to read
+    AmCache (simmilar to ShimCache, stores additional data related to executions):
+      Amcache.hve\Root\File\{Volume GUID}\
+    Background/Desktop Activity Monitor (BAM/DAM, last run programs, full path, exec time):
+      SYSTEM\CurrentControlSet\Services\bam\UserSettings\{SID}
+      SYSTEM\CurrentControlSet\Services\dam\UserSettings\{SID}
+
+  External Devices:
+    USB Device Identification:
+      SYSTEM\CurrentControlSet\Enum\USBSTOR
+      SYSTEM\CurrentControlSet\Enum\USB
+    First/Last Times:
+      SYSTEM\CurrentControlSet\Enum\USBSTOR\Ven_Prod_Version\USBSerial#\Properties\[DEVICE ID]\[TIME]
+      [TIME] =
+        0064	First Connection time
+        0066	Last Connection time
+        0067	Last removal time
+    USB Device Volume Name:
+      SOFTWARE\Microsoft\Windows Portable Devices\Devices 
