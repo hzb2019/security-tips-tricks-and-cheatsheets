@@ -141,3 +141,50 @@ INVESTIGATING THE REGISTRY
         0067	Last removal time
     USB Device Volume Name:
       SOFTWARE\Microsoft\Windows Portable Devices\Devices 
+
+____________
+FILE SYSTEMS
+
+  File Allocation Table (FAT):
+    Creates a table that indexes the location of bits that are allocated to different files.
+    Uses three data structures:
+      Clusters: Basic storage unit. Each file stored is a group of clusters containing the file data.
+      Directory: Contains info including file names, starting clusters, and filename length.
+      FAT: A linked list of all clusters.
+
+    FAT12, FAT16, FAT32 all were developed to provide more storage cluster space over
+    the original FAT(8), allowing for address spaces of 2^12, 2^16, and 2^28 clusters respectively.
+    FAT16 and FAT32 are limited by a maximum file size of 4GB - 1. 
+
+    exFAT was developed by Microsoft to support FAT for storage devices that didn't need the
+    extra security systems in the NTFS storage format. Supports clusters between 4KB to 32MB,
+    and can store up to 128PB.
+
+  NTFS:
+    Introduced in 1993 with Windows NT 3.1. Includes security features and improved reliability 
+    and recovery features.
+
+    Journaling:
+      Contains a $LOGFILE in the volume root directory that logs changes to metadata and can 
+      help the system to recover from a crash or data movement due to defragmentation.
+
+    Access Controls: User-specific permissions for files/directories.
+
+    Volume Shadow Copy: Keeps track of changes to files and can revert to previous copies.
+
+    Alternate Data Streams: Allows multiple data streams to be saved to the same file.
+
+    Master File Table: 
+      A structured database tracking objects stored in the volume.
+
+      $MFT: First record in the volume. Volume Boot Record (VBR) points to this. Has info 
+      about the clusters where all other objects are stored. Contains directory of all files.
+
+      $LOGFILE: Stores transactional logging of filesystem. Maintains system integrity if a crash 
+      occurs.
+
+      $UsnJrnl: Update Sequence Number (USN) journal, aka Change Journal. Keeps info about all
+      files changed in the system and the reason for the change. Present in $Extend record.
+
+      Use Eric Zimmerman's MFT Explorer to browse files. Basic usage for parsing $MFT file:
+        MFTECmd.exe -f [PATH-TO-$MFT-FILE] --csv [PATH-TO-SAVE-RESULTS-IN-CSV]
