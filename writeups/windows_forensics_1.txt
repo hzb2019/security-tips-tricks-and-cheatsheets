@@ -1,0 +1,64 @@
+CHALLENGE WRITEUP
+
+Key scenario points:
+  The organization suspects there were unauthorized computer accesses.
+  Multiple user accounts found on system, there should only be one per computer.
+  Evidence of network drive and USB drive connections.
+
+Before answering any questions, first we load the hives from System32\config and clean them, 
+saving the cleaned hives to \triage\cleaned_hives\[FILE].
+
+Question: How many user created accounts are present on the system? 
+  For this question, my first instinct is to check the SAM hive, because according to my room
+  notes this hive should contain user and group info. Descending through this hive, checking 
+  interesting looking folders, I end up at ROOT\SAM\Domains\Account\Users\Names. Here there 
+  seems to be the list of names registered to the computer. We need to find which accounts 
+  were user created, so we want to count accounts that are not on Windows by default. Searching
+  for "what are default Windows accounts" gives us Administrator, Guest, and DefaultAccount.
+  Counting the rest of the accounts does not give us our answer, because WDAGUtilityAccount
+  also seems to be a Windows account. When that is counted, we have the correct answer.
+
+Question: What is the username of the account that has never been logged in?
+  Another question that I believe should be answerable by using the SAM hive. I realize here 
+  that the directory SAM\Domains\Account\Users already contains all the information I need 
+  to answer the last question, but the default column size in Registry Explorer was so
+  compressed I couldn't actually see any of that information. Now that it is scaled to a size
+  that I can read the information, we can see the column "Total Login Count" and find the 
+  name of the (non-system) user where the value is 0.
+
+Question: What's the password hint for the user THM-4n6?
+  This looks like it's information that should be kept in one of the user-specific hives.
+  We can load their NTUSER.DAT from C:\Users\THM-4n6\ and their USRCLASS.DAT from 
+  C:\Users\THM-4n6\AppData\Local\Microsoft\Windows. Haha! Just kidding! After realizing
+  I have no idea where it should be I went to Google and found this:
+  https://stackoverflow.com/questions/26398156/retrieving-windows-password-hint-from-the-registry
+  It should be located somewhere in SAM, probably under the "Password Hint" column.
+
+Question: When was the file 'Changelog.txt' accessed?
+  NOW is the time we probably need to go look at the NTUSER hives to find last accessed 
+  information on files. Thankfully we can find it under the recently opened files path 
+  (NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs\.txt) in the
+  hive we already loaded for THM-4n6.
+
+Question: What is the complete path from where the python 3.8.2 installer was run? 
+  For this one I will start by looking under the User Assist location for evidence of execution,
+  which hopefully will work but will not if it was run on a command line. Looks like it exists
+  at the expected location: "NTUSER.DAT\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\
+  UserAssist\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\Count" in the THM-4n6 NTUSER.DAT file.
+
+Question: When was the USB device with the friendly name 'USB' last connected?
+  For this we first need to find the USB device with that friendly name, then check when 
+  it was last connected. First we will look for the friendly name in 
+  "SYSTEM\CurrentControlSet\Enum\USB".  
+  It looks like the column exists there, but there no information in the "Friendly Name" column 
+  for this version of the SYSTEM file. Maybe something was there in the dirty file?
+  Nope.
+  Let's go check the USB Device Volume Name location where it might also be stored:
+  "SOFTWARE\Microsoft\Windows Portable Devices\Devices". Looks like we have some good 
+  info here. There seems to be some type of UUID value that we can use, looking 
+  through "SYSTEM\CurrentControlSet\Enum\USB" I can't find any UUID's but in 
+  "SYSTEM\CurrentControlSet\Enum\USBSTOR" there's a matching UUID. We didn't actually 
+  need to go here, because the information we really want is stored in 
+  "C:\Users\THM-4n6\Desktop\cleaned_files\SYSTEM_clean: ControlSet001\Enum\USBSTOR\
+  Disk&Ven_Kingston&Prod_DataTraveler_2.0&Rev_PMAP\1C6F654E59A3B0C179D366AE&0\
+  Properties\{83da6326-97a6-4088-9453-a1923f573b29}\0066".
