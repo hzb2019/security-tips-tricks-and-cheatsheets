@@ -1,0 +1,51 @@
+
+__________________________
+OS AND ACCOUNT INFORMATION
+
+  /etc/os-release
+  /etc/passwd ((user accounts)) cat /etc/passwd| column -t -s :
+  /etc/group ((user groups))
+  /etc/sudoers
+
+  Login information: /var/log
+    btmp ((failed logins)) sudo last -f /var/log/btmp
+    wtmp ((historical logins)) sudo last -f /var/log/wtmp
+  
+  Authentication logs: /var/log/auth.log
+
+____________________
+SYSTEM CONFIGURATION
+
+  /etc/hostname
+  /etc/timezone
+  /etc/network/interfaces
+  /etc/hosts ((local DNS resolution))
+  /etc/resolv.conf ((remote DNS server list))
+  ip (address show)
+  netstat (-natp)
+  ps (-aux)
+
+
+______________________
+PERSISTENCE MECHANISMS
+
+  /etc/crontab
+  /etc/init.d ((run on startup))
+  /etc/bash.bashrc 
+  /etc/profile
+  .bashrc
+
+_____________________
+EVIDENCE OF EXECUTION
+
+  cat /var/log/auth.log |grep -i COMMAND
+  [USER]/.bash_history
+  [USER]/.viminfo
+
+________
+LOGFILES
+
+  /var/log/syslog
+  /var/log/auth.log*
+
+
