@@ -188,3 +188,81 @@ FILE SYSTEMS
 
       Use Eric Zimmerman's MFT Explorer to browse files. Basic usage for parsing $MFT file:
         MFTECmd.exe -f [PATH-TO-$MFT-FILE] --csv [PATH-TO-SAVE-RESULTS-IN-CSV]
+
+________________________
+RECOVERING DELETED FILES
+
+  Autopsy basic usage for deleted file extraction: Open program, click through menus, selecting 
+  options to make a new project and open from disk file/VM image. When the image is loaded, 
+  deselect all from the configure ingest menu. Once it's loaded, expand the Data Sources tree 
+  in the left panel to browse the files.
+
+_____________________
+EVIDENCE OF EXECUTION
+
+  Windows Prefetch Files: C:\Windows\Prefetch
+    Basically a cache for program data so they can be run faster. Has a .pf extension.
+    Includes the following columns of information:
+      Note, SourceFilename, SourceCreated, SourceModified, SourceAccessed, ExecutableName,
+      Hash,Size, Version, RunCount, LastRun, PreviousRun0, PreviousRun1, PreviousRun2, 
+      PreviousRun3, PreviousRun4, PreviousRun5, PreviousRun6, Volume0Name, Volume0Serial, 
+      Volume0Created, Volume1Name, Volume1Serial, Volume1Created, Directories, FilesLoaded, 
+      ParsingError
+    Use EZ's Prefetch Parser (WxTCmd.exe) for parsing:
+      PECmd.exe -f [path-to-Prefetch-files] --csv [path-to-save-csv]
+      PECmd.exe -d [path-to-Prefetch-directory] --csv [path-to-save-csv]
+
+  Windows 10 Timeline: C:\Users\[username]\AppData\Local\ConnectedDevicesPlatform\{randomfolder}\ActivitiesCache.db
+    A SQLite database that stores recently used applications and files.
+    Includes the following columns of information:
+      Id, ActivityTypeOrg, ActivityType, Executable, DisplayText, ContentInfo, Payload,
+      ClipboardPayload, StartTime, EndTime, Duration, LastModifiedTime, LastModifiedOnClient,
+      OriginalLastModifiedOnClient, ExpirationTime, CreatedInCloud, IsLocalOnly, ETag,
+      PackageIdHash, PlatformDeviceId, DevicePlatform, TimeZone
+    Use EZ's WxTCmd.exe for parsing:
+      WxTCmd.exe -f [path-to-timeline-file] --csv [path-to-save-csv]
+
+  Windows Jump Lists: C:\Users\[username]\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations
+    The thing that shows your recently used files when right clicking an icon in the taskbar.
+    Includes the following columns of information:
+      SourceFile, SourceCreated, SourceModified, SourceAccessed, AppId, AppIdDescription,
+      DestListVersion, LastUsedEntryNumber, MRU, EntryNumber, CreationTime, LastModified,
+      Hostname, MacAddress, Path, InteractionCount, PinStatus, FileBirthDroid, FileDroid,
+      VolumeBirthDroid, VolumeDroid, TargetCreated, TargetModified, TargetAccessed, FileSize, 
+      RelativePath, WorkingDirectory, FileAttributes, HeaderFlags, DriveType, VolumeSerialNumber,
+      VolumeLabel, LocalPath, CommonPath, TargetIDAbsolutePath, TargetMFTEntryNumber,
+      TargetMFTSequenceNumber, MachineID, MachineMACAddress, TrackerCreatedOn, ExtraBlocksPresent,
+      Arguments, Notes
+    Use EZ's JLECmd.exe for parsing:
+      JLECmd.exe -f [path-to-Jumplist-file] --csv [path-to-save-csv]
+  
+
+_____________________
+FILE/FOLDER KNOWLEDGE
+
+  Shortcut Files:
+    These contain first and last opened times of the file and its path.
+    C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Recent\
+    C:\Users\<username>\AppData\Roaming\Microsoft\Office\Recent\
+    Use EZ's Lnk Explorer (LECmd.exe) for parsing:
+      LECmd.exe -f <path-to-shortcut-files> --csv <path-to-save-csv>
+
+  IE/Edge History: C:\Users\<username>\AppData\Local\Microsoft\Windows\WebCache\WebCacheV*.dat
+    Can be explored using Autopsy, by selecting logical files as the data source type, then the 
+    volume folder to examine and selecting "Recent Activity" in the Configure Ingest screen. 
+    Checking "Web History" under "Data Artifacts" on the left panel will have the relevant 
+    information.
+
+  Jump Lists:
+    Same as in Evidence of Execution section, info here can identify last executed programs 
+    and last opened files.
+
+
+____________________
+EXTERNAL/USB DEVICES
+
+  Information related to setting up a new device is always stored in setupapi.dev.log located 
+  at C:\Windows\inf\setupapi.dev.log
+
+  
+
