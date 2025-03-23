@@ -62,6 +62,8 @@ FROM https://tryhackme.com/r/room/zeekbro
     Filter specific keywords:
     ubuntu@ubuntu$ cat test.txt | grep 'keywords'
 
+    grep binary file matches: grep -a 
+
     Sort outputs alphabetically:
     ubuntu@ubuntu$ cat test.txt | sort
 
