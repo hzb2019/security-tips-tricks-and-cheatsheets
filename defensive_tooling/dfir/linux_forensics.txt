@@ -25,7 +25,6 @@ SYSTEM CONFIGURATION
   netstat (-natp)
   ps (-aux)
 
-
 ______________________
 PERSISTENCE MECHANISMS
 
