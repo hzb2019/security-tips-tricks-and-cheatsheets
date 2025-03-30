@@ -1,0 +1,24 @@
+
+Can you identify the product name of the machine?
+  Select "System Information" from the left side. Look under "Operating System Information".
+
+Can you find the name of the note left on the Desktop for the "Charles"?
+  Check the "File System" and navigate to C:\Users\charles\Desktop, then right click "Desktop"
+  and select "Toggle Selected Item Only".
+
+Find the Windows Defender service; what is the name of its service DLL? 
+  Go to "Windows Services" on the left side and use the regex search for "defender".
+  Scroll to the right to find the "Service DLL" column.
+
+The user manually downloaded a zip file from the web. Can you find the filename? 
+  Go to "File Download History" on the left panel and use regex search for "zip". Another 
+  useful search could have been for "Manual" in the "Download Type" column.
+
+Provide the filename of the malicious executable that got dropped on the user's Desktop.
+  Go to "Timeline", then search for "C:\Users\charles\Desktop" in the "Summary" column.
+
+Provide the MD5 hash for the dropped malicious executable.
+  Take from the "MD5" column in the row found above.
+
+What is the name of the ransomware? 
+  Look at the text before ".exe" in the malicious executable.

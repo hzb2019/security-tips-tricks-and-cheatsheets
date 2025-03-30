@@ -1,0 +1,66 @@
+
+  https://fireeye.market/apps/211364
+
+"Here is what you can do using Redline:
+  Collect registry data (Windows hosts only)
+  Collect running processes
+  Collect memory images (before Windows 10)
+  Collect Browser History
+  Look for suspicious strings
+  And much more!"
+
+Data Collection:
+  Standard Collector: gathers the minimum amount of data needed for analysis, fastest option
+  Comprehensive Collector: gathers the maximum amount of data, may take 1+ hours
+  IOC Search Collector: collects data matching configured IOC's, made in the IOC editor
+    IOC's: https://www.crowdstrike.com/cybersecurity-101/indicators-of-compromise/
+    IOC Editor: https://fireeye.market/apps/S7cWpi9W
+
+  When the collector is selected, you can still click "edit your script" in the "Review
+  Script Configuration" section to further choose which things are collected.
+
+  Make sure to save the collector to an EMPTY folder. 
+  Run "RunRedlineAudit.bat" as administrator to begin audit.
+  Go into the "Sessions" folder to look at the results.
+
+Redline Interface:
+  System Information: machine, BIOS (windows only), OS, User info
+  Processes: proc name, PID, args, parent processes, username, expands into:
+    handles: connections between procs to Windows objects/resources. references
+             things like files, registry keys, resources, etc.
+    Memory Sections: lets one investigate unsigned memory sections. useful if unsigned DLL's
+                     are found in use.
+    Strings: strings.
+    Ports: things like explorer.exe or notepad.exe (or other system processes) shouldn't have
+           outbound connections. 
+  Other important sections:
+    File System 
+    Registry
+    Windows Services
+    Tasks (check for persistence)
+    Event Logs (check for suspicious Windows PowerShell, Logon/Logoff, user creation, etc)
+    ARP and Route Entries
+    Browser URL History
+    File Download History
+
+  TimeWrinkles: filters the timeline to only events that took place around a specific time
+  TimeCrunches: hides the same events occurring within the same minute
+
+  Data Analysis guides: https://fireeye.market/assets/apps/211364/documents/877936_en.pdf
+
+IOC Search Collector:
+  IOC File Editor (Only supports up to Windows 7): https://fireeye.market/apps/S7cWpi9W
+    Guide: https://fireeye.market/assets/apps/S7cWpi9W//9cb9857f/ug-ioc-editor.pdf
+    OpenIOC Editor (Supports Win10): https://fireeye.market/apps/211404
+
+  This file editor helps with generating a text file containing IOC's that can be easily
+  distributed.
+
+  The generated files can then be fed into the IOC Search Collector, or it can be used in
+  an existing analysis in redline by going to the "IOC Reports" in the "Analysis Data"
+  panel on the bottom of the left side panel. 
+  
+
+
+
+
