@@ -1,0 +1,35 @@
+
+  "Kroll Artifact Parser and Extractor (KAPE) parses and extracts Windows forensics artifacts. 
+  It is a tool that can significantly reduce the time needed to respond to an incident by 
+  providing forensic artifacts from a live system or a storage device much earlier than the 
+  imaging process completes. 
+
+  KAPE serves two primary purposes, 1) collect files and 2) process the collected files as per 
+  the provided options. For achieving these purposes, KAPE uses the concept of targets and 
+  modules. Targets can be defined as the forensic artifacts that need to be collected."
+  -THM Description
+
+  When KAPE collects files, it first copies the low hanging fruits that are not blocked
+  by the OS, then for those that are blocked, it bypasses the OS using raw disk reads to
+  copy those files. Copies are stored with original metadata, and maintain their directory
+  structure.
+
+
+  "'Targets' are the artifacts that need to be collected from a system or image and copied to our 
+  provided destination." These can be collected and formed into compound targets, to improve
+  ease of use when performing rapid response. Examples can be found in the Targets directory,
+  or for Coumpound Targets there are the files "!BasicCollection", "!SANS_triage" and 
+  "KAPEtriage", on the path KAPE\Targets\CompoundTargets.
+
+  Useful forensic artifacts can be found in C:\Windows.old which contains files retained
+  after Windows updates.
+
+  The file at KAPE\Modules similarly contains template Modules, with the CompoundModules
+  folder serving a similar purpose. The Modules directory also includes a \bin directory 
+  which includes the binaries necessary to run certain modules.
+  
+  The !Disabled path is to keep files that don't need to be used for the current scan.
+  The !Local path is for files that shouldn't be synced with the GitHub repo.
+
+  The Flush option deletes all data that currently exists in the output folder.
+
