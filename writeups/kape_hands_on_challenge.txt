@@ -1,0 +1,38 @@
+Looking through the problems, we can start to try to gather Targets to run.
+For the first problem, we probably want to run \Windows\USBDevicesLogs.tkape
+Third through Fifth problems might want Windows Logs information.
+Third more likely wants \Compound\EvidenceOFExecution.tkape
+
+We might be able to get everything we need in the \Compound\!BasicCollection Compound Target.
+We will copy the file and add the VirtualDisks target, then use that information.
+
+Once execution completed, we can use EZViewer to read the csv outputs.
+
+
+  Two USB Mass Storage devices were attached to this Virtual Machine. One had a Serial Number  
+  0123456789ABCDE. What is the Serial Number of the other USB Device?
+After running kape with the basic collection, we can open the file from the modules folder 
+\module_dest\EventLogs\ and search for the USB serial number that we already have. When 
+we find that serial number, the other USB device serial number is in another nearby log.
+
+Alternatively, one can browse the much easier to parse log, 
+\module_dest\Registry\[DATETIME]\[DATETIME]_USB__C_Windows... 
+
+  7zip, Google Chrome and Mozilla Firefox were installed from a Network drive location on the 
+  Virtual Machine. What was the drive letter and path of the directory from where these software 
+  were installed?
+After searching around, I settled on the \module_dest\Registry\[DATETIME]\[DATETIME]_RecentApps
+file. It seems like all the installers we are looking for are located here in a non-"C:\" drive.
+
+  What is the execution date and time of CHROMESETUP.EXE in MM/DD/YYYY HH:MM?
+Use the "LastAccessed" time from the previous file.
+
+  What search query was run on the system?
+Found in \module_dest\Registry\[DATETIME]\[DATETIME]_WordWheelQuery...
+
+  When was the network named Network 3 First connected to?
+Found in \module_dest\Registry\[DATETIME]\[DATETIME]_KnownNetworks...
+
+  KAPE was copied from a removable drive. Can you find out what was the drive letter of the 
+  drive where KAPE was copied from?
+Found in \module_dest\Registry\[DATETIME]\[DATETIME]_VolumeInfoCache...

@@ -238,7 +238,6 @@ EVIDENCE OF EXECUTION
     Use EZ's JLECmd.exe for parsing:
       JLECmd.exe -f [path-to-Jumplist-file] --csv [path-to-save-csv]
   
-
 _____________________
 FILE/FOLDER KNOWLEDGE
 
@@ -258,7 +257,6 @@ FILE/FOLDER KNOWLEDGE
   Jump Lists:
     Same as in Evidence of Execution section, info here can identify last executed programs 
     and last opened files.
-
 
 ____________________
 EXTERNAL/USB DEVICES

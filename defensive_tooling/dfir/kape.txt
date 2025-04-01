@@ -1,4 +1,6 @@
 
+  Docs: https://ericzimmerman.github.io/KapeDocs/#!index.md
+
   "Kroll Artifact Parser and Extractor (KAPE) parses and extracts Windows forensics artifacts. 
   It is a tool that can significantly reduce the time needed to respond to an incident by 
   providing forensic artifacts from a live system or a storage device much earlier than the 
@@ -31,5 +33,22 @@
   The !Disabled path is to keep files that don't need to be used for the current scan.
   The !Local path is for files that shouldn't be synced with the GitHub repo.
 
-  The Flush option deletes all data that currently exists in the output folder.
+  GUI Options:
+    Flush: deletes all data in Target destination folder
+    Add %d/%m: add date-timestamp/machine info to Target destination directory
+    Process VSCs: process Volume Shadow Copies
+    transfer: transfer collected artifacts through an SFTP server or an S3 bucket
+              files must be enclosed in a container, selected using the radio for Container,
+              and given a name using the "Base Name" option.
+    When using both Target and Module options, providing the Module Source is not required,
+      because modules will use the Target destination as their source.
+  
+  CLI Options:
+    When collecting targets, "tsource", "target", and "tdest" are required.
+    When using modules, "module" and "mdest" are required.
+
+  BATCH MODE:
+    If a list of commands is provided in a file titled "_kape.cli" kept in the same file 
+    as the KAPE binary, it will run the commands in that file on execution.
+
 
