@@ -1,0 +1,62 @@
+(copyable commands, the VM kept disconnecting me and this makes it easy)
+python3 /opt/volatility3/vol.py -f /Scenarios/Investigations/Investigation-1.vmem 
+python3 /opt/volatility3/vol.py -f /Scenarios/Investigations/Investigation-2.raw 
+
+
+What is the build version of the host machine in Case 001?
+  Use the .info plugin, look at the "NTBuildLab" value.
+
+At what time was the memory file acquired in Case 001?
+  Look at the "SystemTime" value from the output for the above plugin.
+
+What process can be considered suspicious in Case 001?
+  Use the malfind plugin.
+
+What is the parent process of the suspicious process in Case 001?
+  Check the pstree.
+
+What is the PID of the suspicious process in Case 001?
+  Found in pstree output above.
+
+What is the parent process PID in Case 001?
+  Found in pstree output above.
+
+What user-agent was employed by the adversary in Case 001?
+  After checking the hint, it seems like we need to use the ".memmap.Memmap" plugin.
+  Usage: 
+    vol.py -f <dump> -o /dir/to/store_dump/ windows.memmap.Memmap --pid <suspicious PID> --dump
+  The dumps can then be searched for keywords using strings *.dmp | grep -i [KEYWORD]
+
+Was Chase Bank one of the suspicious bank domains found in Case 001? (Y/N)
+  strings *.dmp | grep -i "Chase"
+  This is what I did and what is provided in the hint. I have no clue how the presence of 
+  hits is "suspicious" but I will go with it.
+
+What suspicious process is running at PID 740 in Case 002?
+  pslist
+
+What is the full path of the suspicious binary in PID 740 in Case 002?
+  dlllist -> filter for PID -> filter out "Windows"
+
+What is the parent process of PID 740 in Case 002?
+  pstree
+
+What is the suspicious parent process PID connected to the decryptor in Case 002?
+  in pstree output
+
+From our current information, what malware is present on the system in Case 002?
+  in pstree output
+
+What DLL is loaded by the decryptor used for socket creation in Case 002?
+  Google what DLL's are used for socket creation. See which ones are in the DLL list.
+
+What mutex can be found that is a known indicator of the malware in question in Case 002?
+  https://cloud.google.com/blog/topics/threat-intelligence/wannacry-malware-profile
+
+What plugin could be used to identify all files loaded from the malware working directory in 
+Case 002?
+  python3 /opt/volatility3/vol.py asdf 2>error
+  cat error | grep "windows" -> read through highlighted windows plugins to find things
+                                that might be useful
+
+

@@ -11,8 +11,9 @@ https://github.com/volatilityfoundation/volatility3
   your image type and other plugins sorted, you can then begin analyzing the dump"
   -THM
 
-  !!! Volatility has a Python2 and Python3 version, each with their own unique syntax.
-  Some older posts and information may not be using the most current Volatility3, so be careful!!!
+  !!! Volatility has a Python2 and Python3 version, each with their own unique syntax.      !!!
+  !!! Some older posts and information may not be using the most current Volatility3, so be !!!
+  !!! careful                                                                               !!!
   
   Volatility3 automatically identifies host and build of memory files.
 
@@ -51,6 +52,62 @@ IMAGE INFORMATION
   cases, volatility includes the imageinfo plugin to help. 
     !!! imageinfo is not always accurate, use with caution, test multiple profiles !!!
     python3 vol.py -f [FILE] [windows/linux/mac].info
+
+_________________________
+PROCESSES AND CONNECTIONS
+
+  .pslist: plugin to output all current and terminated processes with their exit times,
+           pulls process info from the doubly-linked list process list
+
+  .pstree: plugin to locate processes by finding data structures that match _ESPROCESS,
+           helps detect malware that unlinked itself from the process list linked list
+    
+  .pstree: same as pslist, but shows a tree of parent/child processes
+
+  .netstat: attempts to list all structures in memory that have network connections
+    !!! may not be stable for older versions of Windows. if it does not work, look into !!!
+    !!! https://tools.kali.org/forensics/bulk-extractor for extracting PCAPs            !!!
+
+  .dlllist: lists all DLLs associated with detected processes
+
+______________________
+HUNTING AND DETECTIONS
+
+  .malfind: attempts to identify processes that had code injected - works by scanning heap and
+            identifying processes with the executable bit (RWX/RX) set that do not have a 
+            corresponding memory-mapped file on disk
+
+  .yarascan: compares memory file against YARA rules
+
+__________________
+ADVANCED FORENSICS
+
+  Common hooking techniques:
+    SSDT Hooks
+    IRP Hooks
+    IAT Hooks
+    EAT Hooks
+    Inline Hooks
+
+  .ssdt: System Service Descriptor Table - most common hook target, can be hooked by legit
+         services so analyst discretion in what is malicious is required. 
+         Windows kernel uses SSDT to look up pointers to system functions (which malware 
+         can use to point to itself)
+
+  .modules: dump list of loaded kernel modules - will miss idle or hidden files, best used 
+            once potential indicators are determined as targets to look for
+
+  .driverscan: identifies driver files in the kernel that the modules plugin may have missed,
+               modules plugin should usually be used first, this often will have no output
+
+  other useful plugins (not all of them listed are packaged with Volatility3):
+    modscan
+    driverirp
+    callbacks
+    idt
+    apihooks
+    moddump
+    handles
 
   
 
