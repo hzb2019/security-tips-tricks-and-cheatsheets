@@ -1,0 +1,57 @@
+
+https://github.com/volatilityfoundation/volatility3
+
+  "Volatility is a free memory forensics tool developed and maintained by Volatility Foundation, 
+  commonly used by malware and SOC analysts within a blue team or as part of their detection 
+  and monitoring solutions. Volatility is written in Python and is made up of python plugins 
+  and modules designed as a plug-and-play way of analyzing memory dumps."
+  -THM Introduction
+
+  "To begin analyzing a dump, you will first need to identify the image type... Once you have 
+  your image type and other plugins sorted, you can then begin analyzing the dump"
+  -THM
+
+  !!! Volatility has a Python2 and Python3 version, each with their own unique syntax.
+  Some older posts and information may not be using the most current Volatility3, so be careful!!!
+  
+  Volatility3 automatically identifies host and build of memory files.
+
+_________________
+MEMORY EXTRACTION
+
+  "Extracting a memory dump can be performed in numerous ways, varying based on the requirements 
+  of your investigation. Listed below are a few of the techniques and tools that can be used to 
+  extract a memory from a bare-metal machine." -THM
+    - FTK Imager
+    - Redline
+    - DumpIt.exe
+    - win32dd.exe / win64dd.exe
+    - Memoryze
+    - FastDump
+
+  Extractions on bare metal hosts can be time intensive.
+
+  Memory can be extracted relatively easily from VM's by collecting the virtual memory file
+  from the host machine's drive. The following are common memory file formats.
+    VMWare - .vmem
+    Hyper-V - .bin
+    Parallels - .mem
+    VirtualBox - .sav file *this is only a partial memory file
+
+_______
+PLUGINS
+
+  Because Volatility3 does not use profiles to specify OS, when plugins are used they need to 
+  be prefixed with the OS. [windows/linux/mac].[plugin]
+
+_________________
+IMAGE INFORMATION
+
+  Not all memory files will come with information about the system they describe. In these
+  cases, volatility includes the imageinfo plugin to help. 
+    !!! imageinfo is not always accurate, use with caution, test multiple profiles !!!
+    python3 vol.py -f [FILE] [windows/linux/mac].info
+
+  
+
+
