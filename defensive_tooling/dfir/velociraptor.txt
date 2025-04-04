@@ -1,0 +1,48 @@
+
+https://www.rapid7.com/blog/post/2021/04/21/rapid7-and-velociraptor-join-forces/
+Docs: https://docs.velociraptor.app/docs/overview/
+Instant Velociraptor (deployed only to local machine): https://docs.velociraptor.app/docs/deployment/#instant-velociraptor
+
+  "Velociraptor is a unique, advanced open-source endpoint monitoring, digital forensic and 
+  cyber response platform. It was developed by Digital Forensic and Incident Response (DFIR) 
+  professionals who needed a powerful and efficient way to hunt for specific artifacts and 
+  monitor activities across fleets of endpoints. Velociraptor provides you with the ability 
+  to more effectively respond to a wide range of digital forensic and cyber incident response 
+  investigations and data breaches"
+    - Rapid7 velociraptor documentation
+
+  Velociraptor runs cross-platform between Windows, Mac, and Linux, and the binary can run 
+  as both a client or server. It is also compatible with cloud storage filesystems.
+
+_______________
+CLIENT MACHINES
+
+  To list all clients, click on the search button without any query.
+
+  With a client machine selected, six options across the top of the page are available:
+    Interrogate: Performs interrogation
+    VFS: Virtual File System browser
+    Collected: Shell history, VFS interaction history
+    Overview: Self explanatory.
+      Client ID
+      Agent Version
+      Agent Name
+      Last Seen At
+      Last Seen IP
+      Operating System
+      Hostname
+      Release
+      Architecture
+      Client Metadata
+    VQL Drilldown: Includes performance details, Active Directory domain, active local accounts
+    Shell: PowerShell, cmd, Bash, VQL
+
+  Creating a collection: Go to client page -> Collected tab -> Plus button in top left
+    Select Artifacts: Search and choose from the given list
+    Configure Parameters: Select specific artifacts to configure their parameters
+    Specify Resources: Set resource usage limits for intensive tasks
+    Review: View the full configuration
+    Launch: Run configured collection, close config window
+
+  
+
