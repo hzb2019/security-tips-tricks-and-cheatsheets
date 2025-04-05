@@ -1,0 +1,13 @@
+What is the name in the Artifact Exchange to detect Printnightmare?
+  Search the exchange https://docs.velociraptor.app/exchange/ for "PrintNightmare"
+
+Per the above instructions, what is your Select clause? (no spaces after commas)
+  Fill out the query following the instructions.
+
+What is the name of the DLL that was  placed by the attacker?
+  Enter the query into the notebook, then check the output for interesting names.
+
+What is the PDB entry?
+  Click the suspicious entry, and look at the right side column information.
+
+

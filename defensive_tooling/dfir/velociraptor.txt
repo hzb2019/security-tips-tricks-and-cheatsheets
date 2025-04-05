@@ -2,6 +2,7 @@
 https://www.rapid7.com/blog/post/2021/04/21/rapid7-and-velociraptor-join-forces/
 Docs: https://docs.velociraptor.app/docs/overview/
 Instant Velociraptor (deployed only to local machine): https://docs.velociraptor.app/docs/deployment/#instant-velociraptor
+                                                       run using "velociraptor.exe gui"
 
   "Velociraptor is a unique, advanced open-source endpoint monitoring, digital forensic and 
   cyber response platform. It was developed by Digital Forensic and Incident Response (DFIR) 
@@ -44,5 +45,48 @@ CLIENT MACHINES
     Review: View the full configuration
     Launch: Run configured collection, close config window
 
-  
+  Checking the Virtual File System:
+    https://docs.velociraptor.app/docs/clients/vfs/
+
+    4 folders explanation:
+     "file - uses operating system APIs to access files
+      ntfs - uses raw NTFS parsing to access low level files
+      registry - uses operating system APIs to access the Windows registry
+      artifacts - previously run collections." -THM description
+
+    The three filesystem buttons, from left to right:
+      Refresh (syncs with client)
+      Recursive refresh (syncs with client)
+      Recursive download
+
+___________________________
+VELOCIRAPTOR QUERY LANGUAGE
+
+  https://docs.velociraptor.app/docs/vql/
+
+  velociraptor.exe -v query "SELECT * FROM info()"
+
+  Artifacts (VQL Modules): https://docs.velociraptor.app/docs/vql/artifacts/
+    "Velociraptor allows packaging VQL queries inside mini-programs called Artifacts. An 
+    artifact is simply a structured YAML file containing a query, with a name attached to it. 
+    This allows Velociraptor users to search for the query by name or description and simply 
+    run the query on the endpoint without necessarily needing to understand or type the query 
+    into the UI" -Velociraptor docs
+
+  Use the ? for suggested autocompletions for a keyword
+
+  https://docs.velociraptor.app/docs/vql/extending_vql/
+
+  Forensic Analysis Plugin Categories:
+    https://docs.velociraptor.app/docs/forensic/
+    Searching Filenames
+    Searching Content
+    NTFS Analysis
+    Binary Parsing
+    Evidence of Execution
+    Event Logs
+    Volatile Machine State
+
+
+
 
