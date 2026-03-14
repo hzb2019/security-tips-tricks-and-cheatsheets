@@ -1,0 +1,3 @@
+hexedit
+hexdump
+xxd

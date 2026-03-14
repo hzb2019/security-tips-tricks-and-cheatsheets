@@ -6,9 +6,9 @@ untarball:
 
 ssh file transfer (using ssh credentials):
   download: 
-    scp [LFILEPATH] [RUSER]@[RHOST]:[RFILEPATH]
+    scp  [RUSER]@[RHOST]:[RFILEPATH] [LFILEPATH]
   upload:
-    scp [RUSER]@[RHOST]:[RFILEPATH] [LFILEPATH] 
+    scp [LFILEPATH] [RUSER]@[RHOST]:[RFILEPATH] 
 
 python server:
   python3 -m http.server [LPORT]
