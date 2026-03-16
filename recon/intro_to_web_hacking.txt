@@ -1,0 +1,114 @@
+______________________
+WALKING AN APPLICATION
+
+    you know how to use inspect element and how to view page source
+
+    you also know how the debugger works but don't forget you can set custom breakpoints
+
+    you entirely forgot about the network tab
+        use the network tab to view all requests being made at the site
+        individual requests can be tracked and analyzed
+    
+_________________
+CONTENT DISCOVERY
+
+    ROBOTS.TXT
+
+    FAVICONS
+        default favicons can leak what framework the site is using
+            https://owasp.org/www-community/favicons_database
+            (deprecated) https://wiki.owasp.org/index.php/OWASP_favicon_database
+
+    SITEMAP.XML
+
+    HTTP HEADERS
+        can leak server information and scripting language(s) in use and their versions
+        easily checked with a
+            curl [TARGET] -v
+
+    FRAMEWORK DOCUMENTATION
+        sometimes knowing the framework can get you the default filestructure and leak
+        where admin portals are and other important resources
+
+    OSINT
+
+        GOOGLE HACKING/DORKING
+                https://en.wikipedia.org/wiki/Google_hacking
+            Filter      Example                 Description
+            site        site:tryhackme.com      returns results only from the specified website address
+            inurl       inurl:admin             returns results that have the specified word in the URL
+            filetype    filetype:pdf            returns results which are a particular file extension
+            intitle     intitle:admin           returns results that contain the specified word in the title
+
+        WAPPALYZER
+            https://www.wappalyzer.com/
+            can find frameworks, content management systems (CMS), payment processors, and more, including versions
+
+        WAYBACK MACHINE
+            can be used to find old webpages are still active
+
+        GITHUB
+            check for public repos owned by the target, check them to see if secrets were ever leaked in a commit
+
+        S3 BUCKETS
+                [http(s)://[NAME].s3.amazonaws.com]
+            look for S3 buckets owned by the target and check them to see if any have permissions incorrectly set 
+            and leak valuable information. enumeration can be automated by searching for buckets with the [NAME]s:
+            [TARGET]-assets, [TARGET]-www, [TARGET]-public, [TARGET]-private, or any other potentially useful
+            [TARGET]-[PATH] combinations.
+
+
+    AUTOMATED DISCOVERY
+        ffuf -w [WORDLIST] -u http://[RHOST]/FUZZ
+        dirb http://[RHOST]/ [WORDLIST]
+        gobuster dir --url http://[RHOST]/ -w [WORDLIST]
+    
+_____________________
+SUBDOMAIN ENUMERATION
+
+    /SecLists/Discovery/DNS/namelist.txt
+
+    OSINT
+
+        SSL/TLS Certs
+            https://crt.sh/
+            
+            cert logs here can enumerate a lot of subdomains without requiring any kind of noisy scanning
+
+        GOOGLE SEARCH
+            site:*.[DOMAIN].com -site:www.[DOMAIN].com
+
+        Sublist3r
+            https://www.kali.org/tools/sublist3r/
+            Automated OSINT subdomain discovery
+
+    DNS BRUTEFORCE
+        dnsrecon (-t brt) -d [DOMAIN].com
+
+    VIRTUAL HOSTS
+        sometimes (especially in non-prod sites) subdomains are not accessible through OSINT methods
+        check /etc/hosts or c:\windows\system32\drivers\etc\hosts for locally designated DNS, but private
+        DNS servers can also be used
+
+        one webserver can host multiple websites simultaneously, so the HOST header in webrequests is used
+        to define which site to retrieve from the server. this can be fuzzed using:
+            ffuf -w [WORDLIST] -H "Host: FUZZ.[TARGET]" -u http://[TARGET] -fs [RESPONSE_SIZE]
+            where [RESPONSE_SIZE] is the size of the "invalid" message that we want to filter out
+
+_____________________
+AUTHENTICATION BYPASS
+
+    Finding valid usernames:
+
+    First, capture or otherwise analyze a registration request that informs you if a username is already taken.
+    Then use below as a base to enumerate valid usernames if needed:
+        ffuf -w [WORDLIST] -X POST -d "username=FUZZ([EVERYTHING ELSE])" (-H "Content-Type: application/x-www-form-urlencoded") 
+             -u http://[TARGET]/[REGISTRATION] -mr [USERNAME EXISTS TEXT IN RESPONSE]
+    
+            [USERNAME EXISTS TEXT IN RESPONSE] should look something like ["username already exists"]
+
+    
+    Cracking accounts:
+
+    Now that you in theory have a list of valid account usernames, save it to a username file.
+    You can then use below as a base to try to find valid username/password combinations

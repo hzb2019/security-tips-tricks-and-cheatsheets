@@ -1,0 +1,27 @@
+https://github.com/ffuf/ffuf
+
+basic usage:
+    ffuf -w [WORDLIST] -u http://[RHOST]/FUZZ
+
+useful options:
+    -H ["Name: Value"], separated by colon. Multiple -H flags are accepted.
+        -H "Content-Type: application/x-www-form-urlencoded" is useful/required when sending POST DATA
+    -d [POST DATA]
+
+    -m[X]           match
+    -f[X]           filter
+        [X]:
+        c           match/filter HTTP status code (200, 403, etc)
+        l           match/filter amount of lines in response
+        mode        matcher/filter set operator [and/or]
+        r           match/filter regex
+        s           match/filter HTTP response size
+        t           match/filter how many milliseconds to the first response byte, gt or lt: >100 or <100
+        w           match/filter words in response 
+
+    -w  [WORDLIST]
+        extended usage for multiple fuzz locations:
+            -w [WORDLIST1]:[NAME1],[WORDLIST2]:[NAME2],[...] 
+            then in target strings instead of using FUZZ, use [NAME1] [NAME2] etc
+
+    
